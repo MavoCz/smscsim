@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<context:annotation-config />
+	<context:mbean-server />
+	<context:component-scan base-package="net.voldrich.smscsim.spring.auto" />
+	<context:mbean-export server="mbeanServer" />
+
+	<bean id="config" class="com.cloudhopper.smpp.SmppServerConfiguration" scope="prototype">
+		<property name="port" value="10001" />
+		<property name="maxConnectionSize" value="10" />
+		<property name="nonBlockingSocketsEnabled" value="true" />
+		<property name="defaultRequestExpiryTimeout" value="30000" />
+		<property name="defaultWindowMonitorInterval" value="15000" />
+		<property name="defaultWindowSize" value="100" />
+		<property name="defaultWindowWaitTimeout" value="30000" />
+		<property name="defaultSessionCountersEnabled" value="true" />
+		<property name="jmxEnabled" value="true" />
+		<property name="jmxDomain" value="SMSC_1" />		
+	</bean>
+	
+	<bean id="messageIdGenerator" class="net.voldrich.smscsim.spring.auto.ResponseMessageIdGeneratorImpl">
+		<property name="initialMessageIdValue" value="1" />
+	</bean>
+	
+	<bean id="threadPool" class="net.voldrich.smscsim.spring.auto.SmscThreadPool">
+		<property name="maxThreadCount" value="30" />
+	</bean>
+	
+	<bean id="rateSender" class="net.voldrich.smscsim.spring.SmscRateSender">
+		<property name="messageFactory">
+			<bean class="net.voldrich.smscsim.spring.message.DeliverSegmentedMessageFactory">
+				<property name="numberOfSegments" value="2"></property>
+				<property name="destAddressDigits" value="1111"></property>
+			</bean>
+		</property>
+	</bean>
+	
+</beans>
