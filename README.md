@@ -14,15 +14,16 @@ as had the submit message that triggered the delivery receipt. RoundRobin is use
 
 Was used as a testing tools to test proper handling of delivery receipts and segmented deliver messages. 
 
-Sample usage:
- 
-    java -Xms32m -Xmx1024m -jar smscsim.jar -ll INFO -p 34567 34568 34569
-
-Which creates SMPP servers on ports 34567, 34568 and 34569 and sets log level to INFO.
-
 Maven 3.x is needed to build the project and create distribution package.
  
     mvn clean install assembly:assembly
+
+Enables configuration via spring xml contexts. See src\main\resources\context.xml. Project needs to be recompiled after
+config change (room for improvement :-).
+
+Following command starts SMPP servers on ports 34567, 34568 and 34569 and sets log level to INFO:
+ 
+    java -Xms32m -Xmx1024m -jar smscsim.jar -ll INFO -p 34567 34568 34569
 
 Uses following libraries:
 
@@ -31,3 +32,9 @@ Uses following libraries:
 * [Google Guava](https://code.google.com/p/guava-libraries/)
 * [JCommander](http://jcommander.org/)
  
+License
+-------
+
+Copyright (C) 2014 Matous Voldrich.
+
+This work is licensed under the Apache License, Version 2.0. See [LICENSE](License.txt) for details.
