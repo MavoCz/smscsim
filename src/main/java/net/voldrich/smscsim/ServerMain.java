@@ -36,10 +36,10 @@ public class ServerMain {
     public static final ServerMainParameters PARAMS = new ServerMainParameters();
     
 	private List<SmscServer> smppServers = new ArrayList<SmscServer>();
-	
+
 	private ClassPathXmlApplicationContext context;
 
-    static public void main(String[] args) throws Exception {    	
+    static public void main(String[] args) throws Exception {
     	if (!parseParameters(args)) {
 			return;
 		}
@@ -64,7 +64,7 @@ public class ServerMain {
 		return true;
 	}
 	
-	private static void startServer() throws Exception {
+	protected static void startServer() throws Exception {
 		ServerMain server = new ServerMain();
     	server.start();
                 
