@@ -36,6 +36,7 @@ public class ServerMainTest {
     private static final int PORT = 12345;
 
     private static final int NUMBER_OF_SUBMITS = 20;
+    private static final int NUMBER_OF_SUBMITS_2 = 50;
 
     @Autowired
     private ApplicationContext context;
@@ -57,10 +58,15 @@ public class ServerMainTest {
         smscServer.stop();
     }
 
+    /**
+     * Connect 1 session
+     * Send number of submit sm messages
+     * Check that correct delivery receipt count is delivered to back to session.
+     **/
     @Test
     public void testSubmitsAndDeliveryReceipts() throws Exception {
         SmppClient client = new SmppClient("localhost", PORT, "132456");
-        ClientSmppSessionHandler handler = new ClientSmppSessionHandler();
+        BlockingSmppSessionHandler handler = new BlockingSmppSessionHandler();
         SmppSession session = client.connect(handler);
 
         for (int i=0; i<NUMBER_OF_SUBMITS; i++) {
@@ -70,6 +76,33 @@ public class ServerMainTest {
         handler.blockUntilReceived(NUMBER_OF_SUBMITS, NUMBER_OF_SUBMITS);
 
         session.close();
+    }
+
+    /**
+     * Connect 2 sessions
+     * Send different message count from each one
+     * Check that correct delivery receipt count is delivered to each session.
+     **/
+    @Test
+    public void testSubmitsAndDeliveryReceipts2() throws Exception {
+        SmppClient client1 = new SmppClient("localhost", PORT, "132456");
+        BlockingSmppSessionHandler handler1 = new BlockingSmppSessionHandler();
+        SmppSession session1 = client1.connect(handler1);
+
+        for (int i=0; i<NUMBER_OF_SUBMITS; i++) {
+            session1.sendRequestPdu(createSubmitWithRegisteredDelivery(), 1000, false);
+        }
+
+        SmppClient client2 = new SmppClient("localhost", PORT, "789798");
+        BlockingSmppSessionHandler handler2 = new BlockingSmppSessionHandler();
+        SmppSession session2 = client2.connect(handler2);
+
+        for (int i=0; i<NUMBER_OF_SUBMITS_2; i++) {
+            session2.sendRequestPdu(createSubmitWithRegisteredDelivery(), 1000, false);
+        }
+
+        handler1.blockUntilReceived(NUMBER_OF_SUBMITS, NUMBER_OF_SUBMITS);
+        handler2.blockUntilReceived(NUMBER_OF_SUBMITS_2, NUMBER_OF_SUBMITS_2);
     }
 
     private SubmitSm createSubmitWithRegisteredDelivery() throws SmppInvalidArgumentException {
@@ -82,13 +115,15 @@ public class ServerMainTest {
         return submitSm;
     }
 
-
-    public static class ClientSmppSessionHandler extends DefaultSmppSessionHandler {
+    /**
+     * Simple session handler which enables waiting on specific response / deliver sm count by blocking on semaphore.
+     **/
+    public static class BlockingSmppSessionHandler extends DefaultSmppSessionHandler {
 
         private final Semaphore responseSem = new Semaphore(0);
         private final Semaphore deliverSem = new Semaphore(0);
 
-        public ClientSmppSessionHandler() {
+        public BlockingSmppSessionHandler() {
             super(logger);
         }
 

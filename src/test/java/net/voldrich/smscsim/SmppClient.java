@@ -42,8 +42,8 @@ public class SmppClient {
         clientBootstrap = new DefaultSmppClient(Executors.newCachedThreadPool(), 1, monitorExecutor);
 
         config0 = new SmppSessionConfiguration();
-        config0.setWindowSize(1);
-        config0.setName("Tester.Session.0");
+        config0.setWindowSize(10);
+        config0.setName("client-session-" + systemId);
         config0.setType(SmppBindType.TRANSCEIVER);
         config0.setHost(host);
         config0.setPort(port);
