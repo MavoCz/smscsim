@@ -1,31 +1,55 @@
 SMSC SMPP simulator
 =======
 
-Simple SMSC SMPP simulator which supports:
+Simple SMSC SMPP simulator written in Java, basic features:
 
 * Listens on specified ports for SMPP messages and sends back OK responses.
-* For each submit request it receives it sends a delivery receipt with configurable delay.
 * Supports listening on multiple ports.
+* Thanks to Cloudhopper SMPP library detailed realtime statistics of SMPP traffic is available through JMX.  
+
+**Delivery Receipt features**:
+
+* For each submit (MT) request it receives, it sends a delivery receipt after fixed/random delay (configurable).
 * Outgoing delivery receipt messages are sent to connected set of RX and TRX connections with the same application/system ID 
-as had the submit message that triggered the delivery receipt. RoundRobin is used to rotate between available connections.
-* Supports sending of deliver messages to connected clients (ignores application ID of connected sessions).
+as had the submit message that triggered the delivery receipt. 
+* RoundRobin is used to rotate between available matching connections.
+
+**Deliver features, segmented messages**:
+
+* Supports sending of deliver (MO) messages to connected clients.
 * Deliver messages may be segmented SMPP messages, supports segmentation set via optional parameter or via UDH00 or UDH08.
-* MO message sent by simulator is controlled with JMX commands - start, stop, send message stream and so on.
+* MO messages sent by simulator to connected clients are controlled with JMX commands - start, stop, send message stream and so on.
 
-Was used as a testing tools to test proper handling of delivery receipts and segmented deliver messages. 
+Simulator was used as a testing tools to test proper handling of delivery receipts and segmented deliver messages.  
 
-Maven 3.x is needed to build the project and create distribution package.
- 
-    mvn clean install assembly:assembly
-
-Enables configuration via spring xml contexts. See src\main\resources\context.xml. Project needs to be recompiled after
-config change (room for improvement :-).
+**How to run**:
 
 Following command starts SMPP servers on ports 34567, 34568 and 34569 and sets log level to INFO:
  
     java -Xms32m -Xmx1024m -jar smscsim.jar -ll INFO -p 34567 34568 34569
 
-Uses following libraries:
+Only server ports and logging level can be defined when starting the server.
+Other parameters can be changed by changing Spring xml context. See src\main\resources\context.xml. 
+Project needs to be recompiled after such config change (room for improvement :-).
+
+Obviously Java (at least 1.7) is needed to run the simulator and it needs to be in the path.
+
+**How to use JMX features**:
+
+Download monitoring tool [VisualVM](http://visualvm.java.net/download.html) 
+and install additional [MBeans browser plugin](http://visualvm.java.net/plugins.html). 
+
+**How to compile**:
+
+Maven 3.x is needed to build the project and create distribution package.
+ 
+    mvn clean install assembly:assembly
+
+Unit test is provided to test basic delivery receipt functionality. See class
+
+    net.voldrich.smscsim.ServerMainTest
+
+Uses following fantastic libraries:
 
 * [Cloudhopper SMPP](https://github.com/twitter/cloudhopper-smpp)
 * [Spring](http://projects.spring.io/spring-framework/)
