@@ -2,6 +2,7 @@ package net.voldrich.smscsim;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
 import com.cloudhopper.smpp.PduAsyncResponse;
+import com.cloudhopper.smpp.SmppConstants;
 import com.cloudhopper.smpp.SmppServerConfiguration;
 import com.cloudhopper.smpp.SmppSession;
 import com.cloudhopper.smpp.impl.DefaultSmppSessionHandler;
@@ -34,6 +35,8 @@ public class ServerMainTest {
     private static final Logger logger = LoggerFactory.getLogger(ServerMainTest.class);
 
     private static final int PORT = 12345;
+    private static final String SYSTEM_ID = "132456";
+    private static final String SYSTEM_ID_2 = "789798";
 
     private static final int NUMBER_OF_SUBMITS = 20;
     private static final int NUMBER_OF_SUBMITS_2 = 50;
@@ -55,7 +58,12 @@ public class ServerMainTest {
 
     @After
     public void after() {
-        smscServer.stop();
+        try {
+            smscServer.stop();
+            smscServer.destroy();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -65,7 +73,7 @@ public class ServerMainTest {
      **/
     @Test
     public void testSubmitsAndDeliveryReceipts() throws Exception {
-        SmppClient client = new SmppClient("localhost", PORT, "132456");
+        SmppClient client = new SmppClient("localhost", PORT, SYSTEM_ID);
         BlockingSmppSessionHandler handler = new BlockingSmppSessionHandler();
         SmppSession session = client.connect(handler);
 
@@ -85,7 +93,7 @@ public class ServerMainTest {
      **/
     @Test
     public void testSubmitsAndDeliveryReceipts2() throws Exception {
-        SmppClient client1 = new SmppClient("localhost", PORT, "132456");
+        SmppClient client1 = new SmppClient("localhost", PORT, SYSTEM_ID);
         BlockingSmppSessionHandler handler1 = new BlockingSmppSessionHandler();
         SmppSession session1 = client1.connect(handler1);
 
@@ -93,7 +101,7 @@ public class ServerMainTest {
             session1.sendRequestPdu(createSubmitWithRegisteredDelivery(), 1000, false);
         }
 
-        SmppClient client2 = new SmppClient("localhost", PORT, "789798");
+        SmppClient client2 = new SmppClient("localhost", PORT, SYSTEM_ID_2);
         BlockingSmppSessionHandler handler2 = new BlockingSmppSessionHandler();
         SmppSession session2 = client2.connect(handler2);
 
@@ -147,7 +155,9 @@ public class ServerMainTest {
 
         @Override
         public void fireExpectedPduResponseReceived(PduAsyncResponse pduAsyncResponse) {
-            responseSem.release();
+            if (pduAsyncResponse.getResponse().getCommandStatus() == SmppConstants.STATUS_OK) {
+                responseSem.release();
+            }
         }
 
         public void blockUntilReceived(int expectedResponses, int expectedDeliverSm) throws InterruptedException {

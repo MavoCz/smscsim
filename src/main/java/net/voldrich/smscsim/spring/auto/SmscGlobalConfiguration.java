@@ -16,9 +16,6 @@ public class SmscGlobalConfiguration {
 	private ResponseMessageIdGenerator messageIdGenerator;
 
 	@Autowired
-	private SmscThreadPool threadPool;
-
-	@Autowired
 	private SmppSessionManager sessionManager;
 
     @Autowired
@@ -38,14 +35,6 @@ public class SmscGlobalConfiguration {
 
 	public void setMessageIdGenerator(ResponseMessageIdGenerator messageIdGenerator) {
 		this.messageIdGenerator = messageIdGenerator;
-	}
-
-	public SmscThreadPool getThreadPool() {
-		return threadPool;
-	}
-
-	public void setThreadPool(SmscThreadPool threadPool) {
-		this.threadPool = threadPool;
 	}
 
 	public SmppSessionManager getSessionManager() {

@@ -10,12 +10,12 @@
 	<properties>
 		<jdk.version>1.7</jdk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.springframework.version>4.0.6.RELEASE</org.springframework.version>
-        <guava.version>17.0</guava.version>
-        <slf4j.version>1.7.7</slf4j.version>
+		<org.springframework.version>4.1.4.RELEASE</org.springframework.version>
+        <guava.version>18.0</guava.version>
+        <slf4j.version>1.7.10</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <chsmp.smpp.version>5.0.6</chsmp.smpp.version>
-        <jcommander.version>1.35</jcommander.version>
+        <jcommander.version>1.47</jcommander.version>
 	</properties>
 	<dependencies>
 		<dependency>

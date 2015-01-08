@@ -8,17 +8,27 @@ import com.cloudhopper.smpp.SmppServerConfiguration;
 import com.cloudhopper.smpp.impl.DefaultSmppServer;
 import com.cloudhopper.smpp.type.SmppChannelException;
 
+/**
+ * Instance of SMSC server listening on one port
+ * Each instance os SMSC server has its own executors
+ * This is because SMPP library shutdowns the executors when stopped
+ **/
 public class SmscServer {
 	private static final Logger logger = LoggerFactory.getLogger(SmscServer.class);
+    private static final int THREAD_COUNT = 10;
 
-	private DefaultSmppServer smppServer;
-	
-	public SmscServer(SmscGlobalConfiguration config, SmppServerConfiguration serverConfig) {
+    private DefaultSmppServer smppServer;
+
+    public SmscServer(SmscGlobalConfiguration config, SmppServerConfiguration serverConfig) {
+        this(config, serverConfig, new SmscServerThreadPoolFactory(THREAD_COUNT));
+    }
+
+	public SmscServer(SmscGlobalConfiguration config, SmppServerConfiguration serverConfig, SmscServerThreadPoolFactory threadPoolFactory) {
 		smppServer = new DefaultSmppServer(
         		serverConfig, 
-        		new SmscSmppServerHandler(config), 
-        		config.getThreadPool().getExecutor(), 
-        		config.getThreadPool().getMonitorExecutor());		
+        		new SmscSmppServerHandler(config),
+                threadPoolFactory.createMainExecutor(),
+                threadPoolFactory.createMonitorExecutor());
 	}
 	
 	

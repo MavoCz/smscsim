@@ -27,10 +27,6 @@
 		<property name="initialMessageIdValue" value="1" />
 	</bean>
 	
-	<bean id="threadPool" class="net.voldrich.smscsim.spring.auto.SmscThreadPool">
-		<property name="maxThreadCount" value="30" />
-	</bean>
-	
 	<bean id="rateSender" class="net.voldrich.smscsim.spring.SmscRateSender">
 		<property name="messageFactory">
 			<bean class="net.voldrich.smscsim.spring.message.DeliverSegmentedMessageFactory">
