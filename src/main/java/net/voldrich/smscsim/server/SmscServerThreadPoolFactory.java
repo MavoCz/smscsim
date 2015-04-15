@@ -1,5 +1,6 @@
 package net.voldrich.smscsim.server;
 
+import com.cloudhopper.smpp.util.DaemonExecutors;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -11,15 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SmscServerThreadPoolFactory {
 
-    private int maxThreadCount;
-
-    /** Note that thread count should be equal and bigger than maxConnectionSize defined in context.xml*/
-    public SmscServerThreadPoolFactory(int maxThreadCount) {
-        this.maxThreadCount = maxThreadCount;
-    }
-
     public ThreadPoolExecutor createMainExecutor() {
-        return (ThreadPoolExecutor) Executors.newFixedThreadPool(maxThreadCount);
+        return (ThreadPoolExecutor) DaemonExecutors.newCachedDaemonThreadPool();
     }
 
     public ScheduledThreadPoolExecutor createMonitorExecutor() {

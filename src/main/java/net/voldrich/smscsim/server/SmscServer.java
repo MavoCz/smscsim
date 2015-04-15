@@ -15,12 +15,11 @@ import com.cloudhopper.smpp.type.SmppChannelException;
  **/
 public class SmscServer {
 	private static final Logger logger = LoggerFactory.getLogger(SmscServer.class);
-    private static final int THREAD_COUNT = 10;
 
     private DefaultSmppServer smppServer;
 
     public SmscServer(SmscGlobalConfiguration config, SmppServerConfiguration serverConfig) {
-        this(config, serverConfig, new SmscServerThreadPoolFactory(THREAD_COUNT));
+        this(config, serverConfig, new SmscServerThreadPoolFactory());
     }
 
 	public SmscServer(SmscGlobalConfiguration config, SmppServerConfiguration serverConfig, SmscServerThreadPoolFactory threadPoolFactory) {
