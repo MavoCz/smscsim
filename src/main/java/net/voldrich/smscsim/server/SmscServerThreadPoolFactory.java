@@ -15,7 +15,7 @@ public class SmscServerThreadPoolFactory {
     public ThreadPoolExecutor createMainExecutor() {
         return (ThreadPoolExecutor) DaemonExecutors.newCachedDaemonThreadPool();
     }
-    
+
     public ScheduledThreadPoolExecutor createMonitorExecutor() {
         return (ScheduledThreadPoolExecutor)Executors.newScheduledThreadPool(1, new ThreadFactory() {
             private AtomicInteger sequence = new AtomicInteger(0);
