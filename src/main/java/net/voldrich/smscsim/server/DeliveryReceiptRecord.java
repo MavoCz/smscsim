@@ -16,8 +16,8 @@ public class DeliveryReceiptRecord extends DelayedRecord {
 
 	public DeliveryReceiptRecord(SmppSession session, SubmitSm pduRequest, long messageId) {
 		super(session);
-		this.sourceAddress = pduRequest.getDestAddress();
-		this.destinationAddress = pduRequest.getSourceAddress();
+		this.sourceAddress = pduRequest.getSourceAddress();
+		this.destinationAddress = pduRequest.getDestAddress();
 		this.messageId = messageId;
 		this.submitDate = new DateTime();
 	}

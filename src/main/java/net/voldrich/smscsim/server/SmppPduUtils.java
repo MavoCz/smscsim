@@ -31,7 +31,7 @@ public class SmppPduUtils {
 		pdu0.setDefaultMsgId((byte) 0x00);
 
 		DeliveryReceipt deliveryReceipt = new DeliveryReceipt(FormatUtils.formatAsDec(deliveryReceiptRecord.getMessageId()), 1, 1,
-				deliveryReceiptRecord.getSubmitDate(), new DateTime(), SmppConstants.STATE_DELIVERED, 0, "-");
+				deliveryReceiptRecord.getSubmitDate(), new DateTime(), SmppConstants.STATE_DELIVERED, "000", "-");
 		String shortMessage = deliveryReceipt.toShortMessage();
 		pdu0.setShortMessage(CharsetUtil.encode(shortMessage, CharsetUtil.CHARSET_GSM));
 
