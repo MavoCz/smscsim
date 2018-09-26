@@ -22,6 +22,19 @@ as had the submit message that triggered the delivery receipt.
 
 Simulator was used as a testing tools to test proper handling of delivery receipts and segmented deliver messages.  
 
+**How to run in Intellij**
+
+* Open the project in Intellij.
+* Make sure the project is using JDK 7. This can be verified in the `Project Structure` window.
+  * **Note**: Despite the note below saying at least JDK 7 is required, running the application with JDK 10 produced no delivery 
+  receipts. The bad thing is running the application using JDK 10 throws no exceptions, but the thread handling delivery receipts 
+  does not seem to be running at all. This may be because of the Java module system, but that's unconfirmed.
+* Run the `ServerMain.java` at least once to make Intellij create a run configuration.
+* After running `ServerMain.java`, go to Run -> Edit Configurations. 
+* In the `Run/Debug Configurations`, you should see `ServerMain` under `Applications`
+* Type `-ll INFO -p 34567 34568 34569` in the `Program Arguments` text box.
+* Run or re-run `ServerMain.java`
+
 **How to run**:
 
 Following command starts SMPP servers on ports 34567, 34568 and 34569 and sets log level to INFO:
