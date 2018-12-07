@@ -53,7 +53,12 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
                 // We can not wait in this thread!!
                 // It would block handling of other messages and performance would drop drastically!!
                 // create and enqueue delivery receipt
-                if (submitSm.getRegisteredDelivery() > 0 && deliverSender != null) {
+                if(submitSm.getRegisteredDelivery() > 0 && deliverSender != null && submitSm.getSourceAddress().getAddress().equals("TEST")) {
+                    logger.info("Source address is: 'TEST', responding with failed delivery receipt");
+                    FailedDeliveryReceiptRecord record = new FailedDeliveryReceiptRecord(session, submitSm, messageId);
+                    record.setDeliverTime(deliveryReceiptScheduler.getDeliveryTimeMillis());
+                    deliverSender.scheduleDelivery(record);
+                } else if (submitSm.getRegisteredDelivery() > 0 && deliverSender != null) {
                     DeliveryReceiptRecord record = new DeliveryReceiptRecord(session, submitSm, messageId);
                     record.setDeliverTime(deliveryReceiptScheduler.getDeliveryTimeMillis());
                     deliverSender.scheduleDelivery(record);
