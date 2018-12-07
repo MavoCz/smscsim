@@ -1,10 +1,7 @@
 package net.voldrich.smscsim;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
-import com.cloudhopper.smpp.PduAsyncResponse;
-import com.cloudhopper.smpp.SmppConstants;
-import com.cloudhopper.smpp.SmppServerConfiguration;
-import com.cloudhopper.smpp.SmppSession;
+import com.cloudhopper.smpp.*;
 import com.cloudhopper.smpp.impl.DefaultSmppSessionHandler;
 import com.cloudhopper.smpp.pdu.DeliverSm;
 import com.cloudhopper.smpp.pdu.PduRequest;
@@ -13,9 +10,13 @@ import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppInvalidArgumentException;
+import com.cloudhopper.smpp.util.DeliveryReceipt;
 import net.voldrich.smscsim.server.SmscServer;
+import net.voldrich.smscsim.server.SmscSmppSessionHandler;
 import net.voldrich.smscsim.spring.auto.SmscGlobalConfiguration;
+import org.joda.time.DateTimeZone;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,10 +48,11 @@ public class ServerMainTest {
     private ApplicationContext context;
 
     private SmscServer smscServer;
+    private SmscGlobalConfiguration smscConfiguration;
 
     @Before
     public void before() throws SmppChannelException {
-        SmscGlobalConfiguration smscConfiguration = context.getBean(SmscGlobalConfiguration.class);
+        smscConfiguration = context.getBean(SmscGlobalConfiguration.class);
         SmppServerConfiguration serverConfig = context.getBean(SmppServerConfiguration.class); // new configuration instance every time
         serverConfig.setPort(PORT); // set this smsc port
         serverConfig.setJmxDomain("SMSC_" + PORT); // set this smsc name so it is not in conflict
@@ -78,7 +82,7 @@ public class ServerMainTest {
         SmppSession session = client.connect(handler);
 
         for (int i=0; i<NUMBER_OF_SUBMITS; i++) {
-            session.sendRequestPdu(createSubmitWithRegisteredDelivery(), 1000, false);
+            session.sendRequestPdu(createSubmitWithRegisteredDelivery("987654321"), 1000, false);
         }
 
         handler.blockUntilReceived(NUMBER_OF_SUBMITS, NUMBER_OF_SUBMITS);
@@ -98,7 +102,7 @@ public class ServerMainTest {
         SmppSession session1 = client1.connect(handler1);
 
         for (int i=0; i<NUMBER_OF_SUBMITS; i++) {
-            session1.sendRequestPdu(createSubmitWithRegisteredDelivery(), 1000, false);
+            session1.sendRequestPdu(createSubmitWithRegisteredDelivery("987654321"), 1000, false);
         }
 
         SmppClient client2 = new SmppClient("localhost", PORT, SYSTEM_ID_2);
@@ -106,23 +110,71 @@ public class ServerMainTest {
         SmppSession session2 = client2.connect(handler2);
 
         for (int i=0; i<NUMBER_OF_SUBMITS_2; i++) {
-            session2.sendRequestPdu(createSubmitWithRegisteredDelivery(), 1000, false);
+            session2.sendRequestPdu(createSubmitWithRegisteredDelivery("987654321"), 1000, false);
         }
 
         handler1.blockUntilReceived(NUMBER_OF_SUBMITS, NUMBER_OF_SUBMITS);
         handler2.blockUntilReceived(NUMBER_OF_SUBMITS_2, NUMBER_OF_SUBMITS_2);
     }
 
-    private SubmitSm createSubmitWithRegisteredDelivery() throws SmppInvalidArgumentException {
+    /**
+     * SMSC Sim should return a failed delivery receipt upon checking that the source address is "TEST"
+     **/
+    @Test
+    public void testFailDelivery() throws Exception {
+        SmppClient client = new SmppClient("localhost", PORT, SYSTEM_ID);
+        DeliveryReceiptCapturingAndBlockingSessionHandler handler = new DeliveryReceiptCapturingAndBlockingSessionHandler(smscServer.getSessionManager().getNextServerSession() ,smscConfiguration);
+        SmppSession session = client.connect(handler);
+        session.sendRequestPdu(createSubmitWithRegisteredDelivery("TEST"), 1000, false);
+        handler.blockUntilDelivered(1);
+        session.close();
+
+        byte[] shortMessage = handler.capturedDeliverSm.get(0).getShortMessage();
+        String decodedShortMessage = CharsetUtil.decode(shortMessage, CharsetUtil.CHARSET_GSM);
+        DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(decodedShortMessage, DateTimeZone.UTC);
+        Assert.assertEquals(deliveryReceipt.getErrorCode(),500);
+        Assert.assertEquals(deliveryReceipt.getState(),SmppConstants.STATE_REJECTED);
+    }
+
+    private SubmitSm createSubmitWithRegisteredDelivery(String sourceAddress) throws SmppInvalidArgumentException {
         SubmitSm submitSm = new SubmitSm();
         submitSm.setDestAddress(new Address((byte)0,(byte)0, "123456789"));
-        submitSm.setSourceAddress(new Address((byte) 0, (byte) 0, "987654321"));
+        submitSm.setSourceAddress(new Address((byte) 0, (byte) 0, sourceAddress));
         String text160 = "\u20AC Lorem [ipsum] dolor sit amet, consectetur adipiscing elit. Proin feugiat, leo id commodo tincidunt, nibh diam ornare est, vitae accumsan risus lacus sed sem metus.";
         submitSm.setShortMessage(CharsetUtil.encode(text160, CharsetUtil.CHARSET_GSM));
         submitSm.setRegisteredDelivery((byte)1);
         return submitSm;
     }
 
+    public static class DeliveryReceiptCapturingAndBlockingSessionHandler extends SmscSmppSessionHandler {
+
+        private List<DeliverSm> capturedDeliverSm = new ArrayList<>();
+
+        private final Semaphore deliverSem = new Semaphore(0);
+
+        public DeliveryReceiptCapturingAndBlockingSessionHandler(SmppServerSession session, SmscGlobalConfiguration config) {
+            super(session, config);
+        }
+
+        @Override
+        public PduResponse firePduRequestReceived(PduRequest pduRequest) {
+            if (pduRequest instanceof DeliverSm) {
+                logger.info("DeliverSm received: {}", pduRequest);
+                capturedDeliverSm.add((DeliverSm) pduRequest);
+                deliverSem.release();
+            } else {
+                logger.warn("Unexpected message received: {}", pduRequest);
+            }
+            PduResponse response = pduRequest.createResponse();
+
+            return response;
+        }
+
+        public void blockUntilDelivered(int expectedDeliverSm) throws InterruptedException {
+            deliverSem.acquire(expectedDeliverSm);
+            logger.info("All delivers received");
+        }
+    }
     /**
      * Simple session handler which enables waiting on specific response / deliver sm count by blocking on semaphore.
      **/

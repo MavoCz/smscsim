@@ -1,5 +1,6 @@
 package net.voldrich.smscsim.server;
 
+import net.voldrich.smscsim.spring.auto.SmppSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,19 +18,24 @@ public class SmscServer {
 	private static final Logger logger = LoggerFactory.getLogger(SmscServer.class);
 
     private DefaultSmppServer smppServer;
+    private SmscGlobalConfiguration config;
 
     public SmscServer(SmscGlobalConfiguration config, SmppServerConfiguration serverConfig) {
         this(config, serverConfig, new SmscServerThreadPoolFactory());
     }
 
 	public SmscServer(SmscGlobalConfiguration config, SmppServerConfiguration serverConfig, SmscServerThreadPoolFactory threadPoolFactory) {
+		this.config = config;
 		smppServer = new DefaultSmppServer(
         		serverConfig, 
         		new SmscSmppServerHandler(config),
                 threadPoolFactory.createMainExecutor(),
                 threadPoolFactory.createMonitorExecutor());
 	}
-	
+
+	public SmppSessionManager getSessionManager() {
+    	return config.getSessionManager();
+	}
 	
 	public void destroy() throws Exception {
 		smppServer.destroy();
