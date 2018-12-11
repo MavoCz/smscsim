@@ -53,13 +53,20 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
                 // We can not wait in this thread!!
                 // It would block handling of other messages and performance would drop drastically!!
                 // create and enqueue delivery receipt
-                if(submitSm.getRegisteredDelivery() > 0 && deliverSender != null && submitSm.getSourceAddress().getAddress().equals("TEST")) {
-                    logger.info("Source address is: 'TEST', responding with failed delivery receipt");
-                    FailedDeliveryReceiptRecord record = new FailedDeliveryReceiptRecord(session, submitSm, messageId);
-                    record.setDeliverTime(deliveryReceiptScheduler.getDeliveryTimeMillis());
-                    deliverSender.scheduleDelivery(record);
-                } else if (submitSm.getRegisteredDelivery() > 0 && deliverSender != null) {
-                    DeliveryReceiptRecord record = new DeliveryReceiptRecord(session, submitSm, messageId);
+                if (submitSm.getRegisteredDelivery() > 0 && deliverSender != null) {
+                    String sourceAddress = submitSm.getSourceAddress().getAddress();
+                    DeliveryReceiptRecord record;
+                    if (sourceAddress.matches("TEST\\d\\d")) {
+                        double successRate = Double.parseDouble(sourceAddress.replaceAll("TEST", ""));
+                        double rng = Math.random() * 100;
+                        if(rng <= successRate) {
+                            record = new DeliveryReceiptRecord(session, submitSm, messageId);
+                        } else {
+                            record = new FailedDeliveryReceiptRecord(session, submitSm, messageId);
+                        }
+                    } else {
+                        record = new DeliveryReceiptRecord(session, submitSm, messageId);
+                    }
                     record.setDeliverTime(deliveryReceiptScheduler.getDeliveryTimeMillis());
                     deliverSender.scheduleDelivery(record);
                 }

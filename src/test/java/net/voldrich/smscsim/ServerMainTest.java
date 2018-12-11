@@ -11,8 +11,10 @@ import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppInvalidArgumentException;
 import com.cloudhopper.smpp.util.DeliveryReceipt;
+import com.cloudhopper.smpp.util.DeliveryReceiptException;
 import net.voldrich.smscsim.server.SmscServer;
 import net.voldrich.smscsim.server.SmscSmppSessionHandler;
+import net.voldrich.smscsim.spring.auto.RandomDeliveryReceiptScheduler;
 import net.voldrich.smscsim.spring.auto.SmscGlobalConfiguration;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
@@ -118,22 +120,96 @@ public class ServerMainTest {
     }
 
     /**
-     * SMSC Sim should return a failed delivery receipt upon checking that the source address is "TEST"
-     **/
+     * Success rate is 0
+     */
     @Test
-    public void testFailDelivery() throws Exception {
+    public void testAlwaysFailedDelivery() throws Exception {
         SmppClient client = new SmppClient("localhost", PORT, SYSTEM_ID);
-        DeliveryReceiptCapturingAndBlockingSessionHandler handler = new DeliveryReceiptCapturingAndBlockingSessionHandler(smscServer.getSessionManager().getNextServerSession() ,smscConfiguration);
+        BlockingAndTallyingDeliveryReceiptSessionHandler handler = new BlockingAndTallyingDeliveryReceiptSessionHandler(smscServer.getSessionManager().getNextServerSession() ,smscConfiguration);
         SmppSession session = client.connect(handler);
-        session.sendRequestPdu(createSubmitWithRegisteredDelivery("TEST"), 1000, false);
-        handler.blockUntilDelivered(1);
+        int totalMessagesToSendSMSC = 20;
+        for(int i = 0; i<totalMessagesToSendSMSC; i++) {
+            session.sendRequestPdu(createSubmitWithRegisteredDelivery("TEST00"), 1000, false);
+        }
+
+        handler.blockUntilDelivered(totalMessagesToSendSMSC);
         session.close();
 
-        byte[] shortMessage = handler.capturedDeliverSm.get(0).getShortMessage();
-        String decodedShortMessage = CharsetUtil.decode(shortMessage, CharsetUtil.CHARSET_GSM);
-        DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(decodedShortMessage, DateTimeZone.UTC);
-        Assert.assertEquals(deliveryReceipt.getErrorCode(),500);
-        Assert.assertEquals(deliveryReceipt.getState(),SmppConstants.STATE_REJECTED);
+        Assert.assertEquals(handler.capturedDeliverSmList.size(), totalMessagesToSendSMSC);
+        Assert.assertEquals(handler.failedDeliverSmList.size(), totalMessagesToSendSMSC);
+        Assert.assertEquals(handler.successfulDeliverSmList.size(), 0);
+    }
+
+    /**
+     * Source address does not match pattern specified
+     */
+    @Test
+    public void testChancedBaseSucessButDidNotFollowFormat() throws Exception {
+        SmppClient client = new SmppClient("localhost", PORT, SYSTEM_ID);
+        BlockingAndTallyingDeliveryReceiptSessionHandler handler = new BlockingAndTallyingDeliveryReceiptSessionHandler(smscServer.getSessionManager().getNextServerSession() ,smscConfiguration);
+        SmppSession session = client.connect(handler);
+        int totalMessagesToSendSMSC = 20;
+        for(int i = 0; i<totalMessagesToSendSMSC; i++) {
+            session.sendRequestPdu(createSubmitWithRegisteredDelivery("TSET01"), 1000, false);
+        }
+
+        handler.blockUntilDelivered(totalMessagesToSendSMSC);
+        session.close();
+
+        Assert.assertEquals(handler.capturedDeliverSmList.size(), totalMessagesToSendSMSC);
+        Assert.assertEquals(handler.failedDeliverSmList.size(), 0);
+        Assert.assertEquals(handler.successfulDeliverSmList.size(), totalMessagesToSendSMSC);
+    }
+
+    /**
+     * Success rate is 40% Randomness is tested by using Pearson's chi square test (goodness of fit)
+     * repeats 1000 sample by 5 times, 4 of 5 must succeed
+     * https://www.khanacademy.org/math/statistics-probability/inference-categorical-data-chi-square-tests/chi-square-goodness-of-fit-tests/v/pearson-s-chi-square-test-goodness-of-fit
+     */
+    @Test
+    public void testChancedDelivery() throws Exception {
+        SmppClient client = new SmppClient("localhost", PORT, SYSTEM_ID);
+
+        // decrease delay for faster run time
+        RandomDeliveryReceiptScheduler randomDeliveryReceiptScheduler = (RandomDeliveryReceiptScheduler) smscConfiguration.getDeliveryReceiptScheduler();
+        randomDeliveryReceiptScheduler.setMinDelayMs(0);
+        randomDeliveryReceiptScheduler.setRandomDeltaMs(0);
+
+        BlockingAndTallyingDeliveryReceiptSessionHandler handler = new BlockingAndTallyingDeliveryReceiptSessionHandler(smscServer.getSessionManager().getNextServerSession() ,smscConfiguration);
+        SmppSession session = client.connect(handler);
+        int successCase = 0;
+
+        for(int i=0;i<5;i++) {
+            int totalMessagesToSendSMSC = 1000;
+            for (int j = 0; j < totalMessagesToSendSMSC; j++) {
+                session.sendRequestPdu(createSubmitWithRegisteredDelivery("TEST40"), 1000, false);
+            }
+
+            handler.blockUntilDelivered(totalMessagesToSendSMSC);
+
+            Assert.assertEquals(handler.capturedDeliverSmList.size(), totalMessagesToSendSMSC);
+
+            float chiSquare = ((handler.successfulDeliverSmList.size() - 400) * (handler.successfulDeliverSmList.size() - 400)) / 400f;
+            chiSquare += ((handler.failedDeliverSmList.size() - 600) * (handler.failedDeliverSmList.size() - 600)) / 600f;
+
+            System.out.println("==== case"+(i+1)+" ====");
+            System.out.println("failed: " + handler.failedDeliverSmList.size());
+            System.out.println("success: " + handler.successfulDeliverSmList.size());
+            System.out.println("total: " + handler.capturedDeliverSmList.size());
+            System.out.println("chi: " + chiSquare);
+
+            // the chiSquare must not go beyond 3.84. Using 5% significant difference and degrees of freedom of 1
+            if(chiSquare <= 3.84) {
+                successCase++;
+            }
+
+            handler.capturedDeliverSmList.clear();
+            handler.successfulDeliverSmList.clear();
+            handler.failedDeliverSmList.clear();
+            handler.deliverSem = new Semaphore(0);
+        }
+        session.close();
+        Assert.assertTrue("4 of 5 cases must pass chi-square test", successCase >= 4);
     }
 
     private SubmitSm createSubmitWithRegisteredDelivery(String sourceAddress) throws SmppInvalidArgumentException {
@@ -146,13 +222,15 @@ public class ServerMainTest {
         return submitSm;
     }
 
-    public static class DeliveryReceiptCapturingAndBlockingSessionHandler extends SmscSmppSessionHandler {
+    public static class BlockingAndTallyingDeliveryReceiptSessionHandler extends SmscSmppSessionHandler {
 
-        private List<DeliverSm> capturedDeliverSm = new ArrayList<>();
+        private List<DeliverSm> capturedDeliverSmList = new ArrayList<>();
+        private List<DeliverSm> successfulDeliverSmList = new ArrayList<>();
+        private List<DeliverSm> failedDeliverSmList = new ArrayList<>();
 
-        private final Semaphore deliverSem = new Semaphore(0);
+        private Semaphore deliverSem = new Semaphore(0);
 
-        public DeliveryReceiptCapturingAndBlockingSessionHandler(SmppServerSession session, SmscGlobalConfiguration config) {
+        public BlockingAndTallyingDeliveryReceiptSessionHandler(SmppServerSession session, SmscGlobalConfiguration config) {
             super(session, config);
         }
 
@@ -160,7 +238,20 @@ public class ServerMainTest {
         public PduResponse firePduRequestReceived(PduRequest pduRequest) {
             if (pduRequest instanceof DeliverSm) {
                 logger.info("DeliverSm received: {}", pduRequest);
-                capturedDeliverSm.add((DeliverSm) pduRequest);
+                capturedDeliverSmList.add((DeliverSm) pduRequest);
+
+                String decodedShortMessage = CharsetUtil.decode(((DeliverSm) pduRequest).getShortMessage(), CharsetUtil.CHARSET_GSM);
+                try {
+                    DeliveryReceipt deliveryReceipt = DeliveryReceipt.parseShortMessage(decodedShortMessage, DateTimeZone.UTC);
+                    if(deliveryReceipt.getState() != SmppConstants.STATE_DELIVERED) {
+                        failedDeliverSmList.add((DeliverSm) pduRequest);
+                    } else {
+                        successfulDeliverSmList.add((DeliverSm) pduRequest);
+                    }
+                } catch (DeliveryReceiptException e) {
+                    throw new RuntimeException(e);
+                }
+
                 deliverSem.release();
             } else {
                 logger.warn("Unexpected message received: {}", pduRequest);
