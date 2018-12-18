@@ -13,6 +13,8 @@ Simple SMSC SMPP simulator written in Java, basic features:
 * Outgoing delivery receipt messages are sent to connected set of RX and TRX connections with the same application/system ID 
 as had the submit message that triggered the delivery receipt. 
 * RoundRobin is used to rotate between available matching connections.
+* Can respond with failure messages upon detecting that the `sender` is using pattern `TESTXX` where `XX` is percentage chance that it will succeed. (e.g `TEST00` will always fail, `TEST99` has 99% chance to succeed)
+* **Note**: Delivery receipt will have status DLR of 'FAILED' and err sub-field of '500' 
 
 **Deliver features, segmented messages**:
 
