@@ -1,5 +1,6 @@
 package net.voldrich.smscsim.server;
 
+import java.util.Date;
 import org.joda.time.DateTime;
 
 import net.voldrich.smscsim.spring.auto.SmppSessionManager;
@@ -7,6 +8,7 @@ import com.cloudhopper.smpp.SmppSession;
 import com.cloudhopper.smpp.pdu.PduRequest;
 import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.type.Address;
+import org.joda.time.DateTimeZone;
 
 public class DeliveryReceiptRecord extends DelayedRecord {
 	private final Address sourceAddress;
@@ -19,7 +21,7 @@ public class DeliveryReceiptRecord extends DelayedRecord {
 		this.sourceAddress = pduRequest.getSourceAddress();
 		this.destinationAddress = pduRequest.getDestAddress();
 		this.messageId = messageId;
-		this.submitDate = new DateTime();
+		this.submitDate = new DateTime().withZone(DateTimeZone.UTC);
 	}
 
 	public Address getSourceAddress() {

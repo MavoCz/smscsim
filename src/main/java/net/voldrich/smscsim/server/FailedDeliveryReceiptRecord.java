@@ -9,6 +9,7 @@ import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.tlv.Tlv;
 import com.cloudhopper.smpp.util.DeliveryReceipt;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 public class FailedDeliveryReceiptRecord extends DeliveryReceiptRecord {
 
@@ -35,7 +36,7 @@ public class FailedDeliveryReceiptRecord extends DeliveryReceiptRecord {
         pdu0.setDefaultMsgId((byte) 0x00);
 
         DeliveryReceipt deliveryReceipt = new DeliveryReceipt(FormatUtils.formatAsDec(getMessageId()), 1, 1,
-                getSubmitDate(), new DateTime(), SmppConstants.STATE_REJECTED, "500", "-");
+                getSubmitDate(), new DateTime().withZone(DateTimeZone.UTC), SmppConstants.STATE_REJECTED, "500", "-");
         String shortMessage = deliveryReceipt.toShortMessage();
         pdu0.setShortMessage(CharsetUtil.encode(shortMessage, CharsetUtil.CHARSET_GSM));
 

@@ -11,6 +11,7 @@ import com.cloudhopper.smpp.tlv.Tlv;
 import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.SmppInvalidArgumentException;
 import com.cloudhopper.smpp.util.DeliveryReceipt;
+import org.joda.time.DateTimeZone;
 
 public class SmppPduUtils {
 
@@ -31,10 +32,10 @@ public class SmppPduUtils {
 		pdu0.setDefaultMsgId((byte) 0x00);
 
 		DeliveryReceipt deliveryReceipt = new DeliveryReceipt(FormatUtils.formatAsDec(deliveryReceiptRecord.getMessageId()), 1, 1,
-				deliveryReceiptRecord.getSubmitDate(), new DateTime(), SmppConstants.STATE_DELIVERED, "000", "-");
+				deliveryReceiptRecord.getSubmitDate(), new DateTime().withZone(DateTimeZone.UTC), SmppConstants.STATE_DELIVERED, "000", "-");
 		String shortMessage = deliveryReceipt.toShortMessage();
 		pdu0.setShortMessage(CharsetUtil.encode(shortMessage, CharsetUtil.CHARSET_GSM));
-
+		System.out.println("delivery done date: "+new DateTime().withZone(DateTimeZone.UTC));
 		// order is important
 		// pdu0.addOptionalParameter(new
 		// Tlv(SmppConstants.TAG_SOURCE_NETWORK_TYPE, new byte[] { (byte)0x01
