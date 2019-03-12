@@ -1,0 +1,8 @@
+version: '3'
+services:
+  maven:
+    image: maven:3.6.0-jdk-11-slim
+    container_name: maven
+    volumes:
+      - .:/usr/src/smscsim
+    working_dir: /usr/src/smscsim

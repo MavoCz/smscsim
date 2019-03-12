@@ -44,7 +44,7 @@ public class ServerMain {
 			return;
 		}
 		LogManager.getRootLogger().setLevel(Level.toLevel(PARAMS.getLogLevel()));
-        
+
     	startServer();
     }
     
@@ -67,13 +67,14 @@ public class ServerMain {
 	protected static void startServer() throws Exception {
 		ServerMain server = new ServerMain();
     	server.start();
-                
-        System.out.println("Press enter to stop SMPP servers");
-        System.in.read();
+
+    	// TODO: Remove these
+//        System.out.println("Press enter to stop SMPP servers");
+//        System.in.read();
         
-        server.stop();
-        server.printMetrics();      
-        server.destroy();
+//        server.stop();
+//        server.printMetrics();
+//        server.destroy();
 	}
     
     public ServerMain() {
