@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay&
+      - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
+
+  pre_build:
+    commands:
+      - $(aws ecr get-login --no-include-email --region us-east-1)
+      - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 7)"
+      - echo $TAG
+
+  build:
+    commands:
+      - docker-compose run --rm maven mvn -Dmaven.test.skip=true package
+      # Manually build docker image since gradle-docker plugin currently doesn't support java 9 and plus
+      - docker build -t $CORESMS_SMSCSIM_REPOSITORY:latest .
+      - docker tag $CORESMS_SMSCSIM_REPOSITORY:latest $REPOSITORY_BASE_URI/$CORESMS_SMSCSIM_REPOSITORY:$TAG
+      - docker tag $CORESMS_SMSCSIM_REPOSITORY:latest $REPOSITORY_BASE_URI/$CORESMS_SMSCSIM_REPOSITORY:latest
+      - docker push $REPOSITORY_BASE_URI/$CORESMS_SMSCSIM_REPOSITORY:$TAG
+      - docker push $REPOSITORY_BASE_URI/$CORESMS_SMSCSIM_REPOSITORY:latest
+      - echo "finish build"
+
+  post_build:
+    commands:
+      - cd ${CODEBUILD_SRC_DIR} && printf '{"tag":"%s"}' $TAG > build.json
+
+artifacts:
+  files: build.json
