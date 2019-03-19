@@ -6,3 +6,9 @@ services:
     volumes:
       - .:/usr/src/smscsim
     working_dir: /usr/src/smscsim
+
+  smscsim:
+    image: smscsim:latest
+    container_name: smscsim
+    network_mode: host
+    env_file: .env
