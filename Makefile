@@ -8,7 +8,7 @@ test:
   mvn test
 
 .PHONY: build
-build:
+build: .env
   docker-compose run --rm -v "$$HOME/.m2":/root/.m2  maven mvn -Dmaven.test.skip=true package
   docker build -f Dockerfile -t smscsim:latest .
   docker image prune -f
