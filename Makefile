@@ -15,7 +15,7 @@ build: .env
 
 .PHONY: run
 run: .env
-  docker-compose up -d smscsim
+  docker run --rm --detach --network=host --env-file .env --name smscsim smscsim
 
 .PHONY: logs
 logs:
@@ -28,7 +28,7 @@ start:
 
 .PHONY: stop
 stop:
-  docker-compose down
+  docker stop smscsim
 
 .PHONY: restart
 restart:
