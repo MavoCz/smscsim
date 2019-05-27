@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/coresms-smscsim
     docker:
-    - image: maven:3.6.1-jdk-11-alpine
+    - image: maven:3.6.1-jdk-11-slim
     steps:
     - checkout
     - restore_cache:
