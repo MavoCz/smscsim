@@ -5,52 +5,57 @@ import com.beust.jcommander.Parameters;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * SMSCsim command line options. Annotation driven.
- **/
+/** SMSCsim command line options. Annotation driven. */
 @Parameters(commandDescription = "SMSCsim command line options")
 public class ServerMainParameters {
-	
-	private List<String> smscPorts;
-	
-	private String logLevel = "DEBUG";
 
-	public List<String> getSmscPorts() {
-		return smscPorts;
-	}
+  private List<String> smscPorts;
 
-	@Parameter(names={"-p", "-port"}, description="List of SMSC ports", required=true, variableArity=true)
-	public void setSmscPorts(List<String> smscPorts) {
-		this.smscPorts = smscPorts;		
-	}
-	
-	public List<Integer> getSmscPortsAsIntegers() {
-		List<Integer> smscPortsInts = new ArrayList<Integer>(smscPorts.size());
-		for (String str : smscPorts) {
-			smscPortsInts.add(new Integer(str));
-		}
-		return smscPortsInts;
-	}
+  private String logLevel = "DEBUG";
+  private boolean help;
 
-	public String getLogLevel() {
-		return logLevel;
-	}
+  public List<String> getSmscPorts() {
+    return smscPorts;
+  }
 
-	@Parameter(names="-ll", description="Log level, one of: ALL, DEBUG, INFO, WARN, ERROR, FATAL, OFF, TRACE", required=false)
-	public void setLogLevel(String logLevel) {
-		this.logLevel = logLevel;
-	}
-	
+  @Parameter(
+      names = {"-p", "-port"},
+      description = "List of SMSC ports",
+      required = true,
+      variableArity = true)
+  public void setSmscPorts(List<String> smscPorts) {
+    this.smscPorts = smscPorts;
+  }
 
-	private boolean help; 
-	
-	@Parameter(names = {"--help", "?", "help"}, description="Shows ussage", help = true)
-	public void setHelp(boolean help) {
-		this.help = help;
-	}
-	
-	public boolean isHelp() {
-		return help;
-	}
+  public List<Integer> getSmscPortsAsIntegers() {
+    List<Integer> smscPortsInts = new ArrayList<Integer>(smscPorts.size());
+    for (String str : smscPorts) {
+      smscPortsInts.add(new Integer(str));
+    }
+    return smscPortsInts;
+  }
 
+  public String getLogLevel() {
+    return logLevel;
+  }
+
+  @Parameter(
+      names = "-ll",
+      description = "Log level, one of: ALL, DEBUG, INFO, WARN, ERROR, FATAL, OFF, TRACE",
+      required = false)
+  public void setLogLevel(String logLevel) {
+    this.logLevel = logLevel;
+  }
+
+  public boolean isHelp() {
+    return help;
+  }
+
+  @Parameter(
+      names = {"--help", "?", "help"},
+      description = "Shows ussage",
+      help = true)
+  public void setHelp(boolean help) {
+    this.help = help;
+  }
 }

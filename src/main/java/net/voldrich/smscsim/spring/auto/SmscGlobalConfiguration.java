@@ -8,47 +8,43 @@ import org.springframework.stereotype.Component;
 @Component
 public class SmscGlobalConfiguration {
 
-	@Autowired
-	private DelayedRequestSenderImpl deliverSender;
+  @Autowired private DelayedRequestSenderImpl deliverSender;
 
-	@Autowired
-	private ResponseMessageIdGenerator messageIdGenerator;
+  @Autowired private ResponseMessageIdGenerator messageIdGenerator;
 
-	@Autowired
-	private SmppSessionManager sessionManager;
+  @Autowired private SmppSessionManager sessionManager;
 
-    @Autowired
-    private DeliveryReceiptScheduler deliveryReceiptScheduler;
+  @Autowired private DeliveryReceiptScheduler deliveryReceiptScheduler;
 
-	public DelayedRequestSenderImpl getDeliverSender() {
-		return deliverSender;
-	}
+  public DelayedRequestSenderImpl getDeliverSender() {
+    return deliverSender;
+  }
 
-	public void setDeliverSender(DelayedRequestSenderImpl deliverSender) {
-		this.deliverSender = deliverSender;
-	}
+  public void setDeliverSender(DelayedRequestSenderImpl deliverSender) {
+    this.deliverSender = deliverSender;
+  }
 
-	public ResponseMessageIdGenerator getMessageIdGenerator() {
-		return messageIdGenerator;
-	}
+  public ResponseMessageIdGenerator getMessageIdGenerator() {
+    return messageIdGenerator;
+  }
 
-	public void setMessageIdGenerator(ResponseMessageIdGenerator messageIdGenerator) {
-		this.messageIdGenerator = messageIdGenerator;
-	}
+  public void setMessageIdGenerator(ResponseMessageIdGenerator messageIdGenerator) {
+    this.messageIdGenerator = messageIdGenerator;
+  }
 
-	public SmppSessionManager getSessionManager() {
-		return sessionManager;
-	}
+  public SmppSessionManager getSessionManager() {
+    return sessionManager;
+  }
 
-	public void setSessionManager(SmppSessionManager sessionManager) {
-		this.sessionManager = sessionManager;
-	}
+  public void setSessionManager(SmppSessionManager sessionManager) {
+    this.sessionManager = sessionManager;
+  }
 
-    public DeliveryReceiptScheduler getDeliveryReceiptScheduler() {
-        return deliveryReceiptScheduler;
-    }
+  public DeliveryReceiptScheduler getDeliveryReceiptScheduler() {
+    return deliveryReceiptScheduler;
+  }
 
-    public void setDeliveryReceiptScheduler(DeliveryReceiptScheduler deliveryReceiptScheduler) {
-        this.deliveryReceiptScheduler = deliveryReceiptScheduler;
-    }
+  public void setDeliveryReceiptScheduler(DeliveryReceiptScheduler deliveryReceiptScheduler) {
+    this.deliveryReceiptScheduler = deliveryReceiptScheduler;
+  }
 }

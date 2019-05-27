@@ -9,44 +9,43 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 public class DeliveryReceiptRecord extends DelayedRecord {
-	private final Address sourceAddress;
-	private final Address destinationAddress;
-	private final long messageId;
-	private final DateTime submitDate;
+  private final Address sourceAddress;
+  private final Address destinationAddress;
+  private final long messageId;
+  private final DateTime submitDate;
 
-	public DeliveryReceiptRecord(SmppSession session, SubmitSm pduRequest, long messageId) {
-		super(session);
-		this.sourceAddress = pduRequest.getSourceAddress();
-		this.destinationAddress = pduRequest.getDestAddress();
-		this.messageId = messageId;
-		this.submitDate = new DateTime().withZone(DateTimeZone.UTC);
-	}
+  public DeliveryReceiptRecord(SmppSession session, SubmitSm pduRequest, long messageId) {
+    super(session);
+    this.sourceAddress = pduRequest.getSourceAddress();
+    this.destinationAddress = pduRequest.getDestAddress();
+    this.messageId = messageId;
+    this.submitDate = new DateTime().withZone(DateTimeZone.UTC);
+  }
 
-	public Address getSourceAddress() {
-		return sourceAddress;
-	}
+  public Address getSourceAddress() {
+    return sourceAddress;
+  }
 
-	public Address getDestinationAddress() {
-		return destinationAddress;
-	}
+  public Address getDestinationAddress() {
+    return destinationAddress;
+  }
 
-	public long getMessageId() {
-		return messageId;
-	}
+  public long getMessageId() {
+    return messageId;
+  }
 
-	public DateTime getSubmitDate() {
-		return submitDate;
-	}
+  public DateTime getSubmitDate() {
+    return submitDate;
+  }
 
-	@Override
-	public SmppSession getUsedSession(SmppSessionManager sessionManager) {
-		String systemId = getSession().getConfiguration().getSystemId();
-		return sessionManager.getNextServerSession(systemId);
-	}
+  @Override
+  public SmppSession getUsedSession(SmppSessionManager sessionManager) {
+    String systemId = getSession().getConfiguration().getSystemId();
+    return sessionManager.getNextServerSession(systemId);
+  }
 
-	@Override
-	public PduRequest getRequest(int sequenceNumber) throws Exception {
-		return SmppPduUtils.createDeliveryReceipt(this, sequenceNumber);
-	}
-
+  @Override
+  public PduRequest getRequest(int sequenceNumber) throws Exception {
+    return SmppPduUtils.createDeliveryReceipt(this, sequenceNumber);
+  }
 }
