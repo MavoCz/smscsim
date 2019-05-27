@@ -11,13 +11,16 @@ jobs:
       - checkout
       - restore_cache:
           key: coresms-smscsim-{{ checksum "pom.xml" }}
-      - run:
-          name: Gradle compileTestJava
-          command: cd ~/coresms-smscsim && ./gradlew compileTestJava
+      - dependencies:
+          override:
+            - mvn -DskipTests clean install dependency:resolve-plugins dependency:go-offline
+      - test:
+          override:
+            - mvn -o surefire:test
       - save_cache:
           paths:
-            - ~/.gradle
-          key: coresms-smscsim-{{ checksum "build.gradle" }}
+            - ~/.target
+          key: coresms-smscsim-{{ checksum "pom.xml" }}
       - run:
           name: Gradle test
           command: cd ~/coresms-smscsim && ./gradlew test -Dcheck.fonts=true
