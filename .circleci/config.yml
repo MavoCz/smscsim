@@ -3,29 +3,26 @@ jobs:
   build:
     working_directory: ~/coresms-smscsim
     docker:
-      - image: gradle:jdk11
-    environment:
-      # TODO: verify what memory size it needs
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -XX:+HeapDumpOnOutOfMemoryError" -Dorg.gradle.daemon=false'
+    - image: maven:3.6.1-jdk-11-alpine
     steps:
-      - checkout
-      - restore_cache:
-          key: coresms-smscsim-{{ checksum "pom.xml" }}
-      - dependencies:
-          override:
-            - mvn -DskipTests clean install dependency:resolve-plugins dependency:go-offline
-      - test:
-          override:
-            - mvn -o surefire:test
-      - save_cache:
-          paths:
-            - ~/.target
-          key: coresms-smscsim-{{ checksum "pom.xml" }}
-      - run:
-          name: Gradle test
-          command: cd ~/coresms-smscsim && ./gradlew test -Dcheck.fonts=true
-      - store_artifacts:
-          path: build/test-results
-          destination: tests
-      - store_test_results:
-          path: build/test-results
+    - checkout
+    - restore_cache:
+        key: coresms-smscsim-{{ checksum "pom.xml" }}
+    - dependencies:
+        override:
+          - mvn -DskipTests clean install dependency:resolve-plugins dependency:go-offline
+    - test:
+        override:
+          - mvn -o surefire:test
+    - save_cache:
+        paths:
+          - ~/.target
+        key: coresms-smscsim-{{ checksum "pom.xml" }}
+    - run:
+        name: Gradle test
+        command: cd ~/coresms-smscsim && ./gradlew test -Dcheck.fonts=true
+    - store_artifacts:
+        path: build/test-results
+        destination: tests
+    - store_test_results:
+        path: build/test-results
