@@ -1,7 +1,6 @@
 package net.voldrich.smscsim.spring.auto;
 
 import net.voldrich.smscsim.spring.DeliveryReceiptScheduler;
-import net.voldrich.smscsim.spring.ResponseMessageIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,8 +8,6 @@ import org.springframework.stereotype.Component;
 public class SmscGlobalConfiguration {
 
   @Autowired private DelayedRequestSenderImpl deliverSender;
-
-  @Autowired private ResponseMessageIdGenerator messageIdGenerator;
 
   @Autowired private SmppSessionManager sessionManager;
 
@@ -22,14 +19,6 @@ public class SmscGlobalConfiguration {
 
   public void setDeliverSender(DelayedRequestSenderImpl deliverSender) {
     this.deliverSender = deliverSender;
-  }
-
-  public ResponseMessageIdGenerator getMessageIdGenerator() {
-    return messageIdGenerator;
-  }
-
-  public void setMessageIdGenerator(ResponseMessageIdGenerator messageIdGenerator) {
-    this.messageIdGenerator = messageIdGenerator;
   }
 
   public SmppSessionManager getSessionManager() {

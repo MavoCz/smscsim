@@ -13,7 +13,7 @@ import org.joda.time.DateTimeZone;
 
 public class FailedDeliveryReceiptRecord extends DeliveryReceiptRecord {
 
-  public FailedDeliveryReceiptRecord(SmppSession session, SubmitSm pduRequest, long messageId) {
+  public FailedDeliveryReceiptRecord(SmppSession session, SubmitSm pduRequest, String messageId) {
     super(session, pduRequest, messageId);
   }
 
@@ -37,7 +37,7 @@ public class FailedDeliveryReceiptRecord extends DeliveryReceiptRecord {
 
     DeliveryReceipt deliveryReceipt =
         new DeliveryReceipt(
-            FormatUtils.formatAsHex(getMessageId()),
+            getMessageId(),
             1,
             1,
             getSubmitDate(),
@@ -58,7 +58,7 @@ public class FailedDeliveryReceiptRecord extends DeliveryReceiptRecord {
     pdu0.addOptionalParameter(
         new Tlv(
             SmppConstants.TAG_RECEIPTED_MSG_ID,
-            SmppPduUtils.convertOptionalStringToCOctet(FormatUtils.formatAsHex(getMessageId()))));
+            SmppPduUtils.convertOptionalStringToCOctet(getMessageId())));
     pdu0.addOptionalParameter(
         new Tlv(SmppConstants.TAG_MSG_STATE, new byte[] {SmppConstants.STATE_DELIVERED}));
 

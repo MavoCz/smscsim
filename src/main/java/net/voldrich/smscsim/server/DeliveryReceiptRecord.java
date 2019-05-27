@@ -11,10 +11,10 @@ import org.joda.time.DateTimeZone;
 public class DeliveryReceiptRecord extends DelayedRecord {
   private final Address sourceAddress;
   private final Address destinationAddress;
-  private final long messageId;
+  private final String messageId;
   private final DateTime submitDate;
 
-  public DeliveryReceiptRecord(SmppSession session, SubmitSm pduRequest, long messageId) {
+  public DeliveryReceiptRecord(SmppSession session, SubmitSm pduRequest, String messageId) {
     super(session);
     this.sourceAddress = pduRequest.getSourceAddress();
     this.destinationAddress = pduRequest.getDestAddress();
@@ -30,7 +30,7 @@ public class DeliveryReceiptRecord extends DelayedRecord {
     return destinationAddress;
   }
 
-  public long getMessageId() {
+  public String getMessageId() {
     return messageId;
   }
 
