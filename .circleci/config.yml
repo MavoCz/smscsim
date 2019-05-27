@@ -10,7 +10,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: coresms-smscsim-{{ checksum "build.gradle" }}
+          key: coresms-smscsim-{{ checksum "pom.xml" }}
       - run:
           name: Gradle compileTestJava
           command: cd ~/coresms-smscsim && ./gradlew compileTestJava
