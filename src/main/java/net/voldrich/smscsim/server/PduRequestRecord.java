@@ -1,8 +1,8 @@
 package net.voldrich.smscsim.server;
 
-import net.voldrich.smscsim.spring.auto.SmppSessionManager;
 import com.cloudhopper.smpp.SmppSession;
 import com.cloudhopper.smpp.pdu.PduRequest;
+import net.voldrich.smscsim.spring.auto.SmppSessionManager;
 
 @SuppressWarnings("rawtypes")
 public class PduRequestRecord extends DelayedRecord {

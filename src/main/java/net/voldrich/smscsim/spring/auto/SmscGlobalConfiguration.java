@@ -1,10 +1,9 @@
 package net.voldrich.smscsim.spring.auto;
 
 import net.voldrich.smscsim.spring.DeliveryReceiptScheduler;
+import net.voldrich.smscsim.spring.ResponseMessageIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import net.voldrich.smscsim.spring.ResponseMessageIdGenerator;
 
 @Component
 public class SmscGlobalConfiguration {

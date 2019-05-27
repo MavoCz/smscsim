@@ -1,7 +1,6 @@
 package net.voldrich.smscsim.server;
 
 import java.util.concurrent.DelayQueue;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

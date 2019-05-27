@@ -1,13 +1,12 @@
 package net.voldrich.smscsim.server;
 
-import net.voldrich.smscsim.spring.auto.SmppSessionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.voldrich.smscsim.spring.auto.SmscGlobalConfiguration;
 import com.cloudhopper.smpp.SmppServerConfiguration;
 import com.cloudhopper.smpp.impl.DefaultSmppServer;
 import com.cloudhopper.smpp.type.SmppChannelException;
+import net.voldrich.smscsim.spring.auto.SmppSessionManager;
+import net.voldrich.smscsim.spring.auto.SmscGlobalConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Instance of SMSC server listening on one port

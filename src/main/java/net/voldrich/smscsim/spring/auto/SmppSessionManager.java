@@ -1,18 +1,16 @@
 package net.voldrich.smscsim.spring.auto;
 
+import com.cloudhopper.smpp.SmppBindType;
+import com.cloudhopper.smpp.SmppServerSession;
+import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.cloudhopper.smpp.SmppBindType;
-import com.cloudhopper.smpp.SmppServerSession;
-import com.google.common.collect.Iterables;
 
 /**
  * Manages all RX and TRX bound SMPP connections represented by session instance.

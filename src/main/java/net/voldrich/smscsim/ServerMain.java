@@ -1,19 +1,17 @@
 package net.voldrich.smscsim;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
+import com.cloudhopper.smpp.SmppServerConfiguration;
 import java.util.ArrayList;
 import java.util.List;
-
+import net.voldrich.smscsim.server.SmscServer;
+import net.voldrich.smscsim.spring.auto.SmscGlobalConfiguration;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import net.voldrich.smscsim.server.SmscServer;
-import net.voldrich.smscsim.spring.auto.SmscGlobalConfiguration;
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
-import com.cloudhopper.smpp.SmppServerConfiguration;
 
 /**
  * SMSC SMPP simulator which supports:

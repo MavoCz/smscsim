@@ -1,10 +1,8 @@
 package net.voldrich.smscsim.spring.auto;
 
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.springframework.stereotype.Component;
-
 import net.voldrich.smscsim.spring.ResponseMessageIdGenerator;
+import org.springframework.stereotype.Component;
 
 /**
  * Handles message ID generation and formating.

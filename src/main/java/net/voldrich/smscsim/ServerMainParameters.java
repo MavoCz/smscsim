@@ -1,10 +1,9 @@
 package net.voldrich.smscsim;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SMSCsim command line options. Annotation driven.

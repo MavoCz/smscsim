@@ -1,11 +1,10 @@
 package net.voldrich.smscsim.spring.message;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import net.voldrich.smscsim.server.SmppPduUtils;
-import net.voldrich.smscsim.spring.auto.SmppSessionManager;
 import com.cloudhopper.smpp.pdu.DeliverSm;
 import com.cloudhopper.smpp.type.Address;
+import net.voldrich.smscsim.server.SmppPduUtils;
+import net.voldrich.smscsim.spring.auto.SmppSessionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DeliverBaseMessageFactory implements MessageFactory<DeliverSm> {
 

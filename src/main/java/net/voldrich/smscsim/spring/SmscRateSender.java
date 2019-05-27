@@ -2,11 +2,9 @@ package net.voldrich.smscsim.spring;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
+import net.voldrich.smscsim.spring.message.MessageFactory;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
-
-import net.voldrich.smscsim.spring.message.MessageFactory;
 
 /**
  * Sends Deliver pdu's at specific rate

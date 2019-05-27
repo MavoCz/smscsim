@@ -1,9 +1,8 @@
 package net.voldrich.smscsim.spring.auto;
 
+import java.util.Random;
 import net.voldrich.smscsim.spring.DeliveryReceiptScheduler;
 import org.springframework.stereotype.Component;
-
-import java.util.Random;
 
 /**
  * Created by Mavo on 2.8.2014.
