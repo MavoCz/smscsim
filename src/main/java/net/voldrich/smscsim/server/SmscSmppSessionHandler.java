@@ -11,8 +11,8 @@ import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.pdu.SubmitSmResp;
 import com.cloudhopper.smpp.pdu.Unbind;
 import java.lang.ref.WeakReference;
+import java.util.UUID;
 import net.voldrich.smscsim.spring.DeliveryReceiptScheduler;
-import net.voldrich.smscsim.spring.ResponseMessageIdGenerator;
 import net.voldrich.smscsim.spring.auto.DelayedRequestSenderImpl;
 import net.voldrich.smscsim.spring.auto.SmscGlobalConfiguration;
 import org.slf4j.Logger;
@@ -26,14 +26,11 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
 
   private DelayedRequestSenderImpl deliverSender;
 
-  private ResponseMessageIdGenerator messageIdGenerator;
-
   private DeliveryReceiptScheduler deliveryReceiptScheduler;
 
   public SmscSmppSessionHandler(SmppServerSession session, SmscGlobalConfiguration config) {
     this.sessionRef = new WeakReference<SmppSession>(session);
     this.deliverSender = config.getDeliverSender();
-    this.messageIdGenerator = config.getMessageIdGenerator();
     this.deliveryReceiptScheduler = config.getDeliveryReceiptScheduler();
   }
 
@@ -45,8 +42,8 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
     if (pduRequest instanceof SubmitSm) {
       SubmitSm submitSm = (SubmitSm) pduRequest;
       SubmitSmResp submitSmResp = submitSm.createResponse();
-      long messageId = messageIdGenerator.getNextMessageId();
-      submitSmResp.setMessageId(FormatUtils.formatAsHex(messageId));
+      String messageId = UUID.randomUUID().toString();
+      submitSmResp.setMessageId(messageId);
       try {
         // We can not wait in this thread!!
         // It would block handling of other messages and performance would drop drastically!!

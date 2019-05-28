@@ -32,7 +32,7 @@ public class SmppPduUtils {
 
     DeliveryReceipt deliveryReceipt =
         new DeliveryReceipt(
-            FormatUtils.formatAsHex(deliveryReceiptRecord.getMessageId()),
+            deliveryReceiptRecord.getMessageId(),
             1,
             1,
             deliveryReceiptRecord.getSubmitDate(),
@@ -42,7 +42,6 @@ public class SmppPduUtils {
             "-");
     String shortMessage = deliveryReceipt.toShortMessage();
     pdu0.setShortMessage(CharsetUtil.encode(shortMessage, CharsetUtil.CHARSET_GSM));
-    System.out.println("delivery done date: " + new DateTime().withZone(DateTimeZone.UTC));
     // order is important
     // pdu0.addOptionalParameter(new
     // Tlv(SmppConstants.TAG_SOURCE_NETWORK_TYPE, new byte[] { (byte)0x01
@@ -54,7 +53,7 @@ public class SmppPduUtils {
         new Tlv(
             SmppConstants.TAG_RECEIPTED_MSG_ID,
             convertOptionalStringToCOctet(
-                FormatUtils.formatAsHex(deliveryReceiptRecord.getMessageId()))));
+                deliveryReceiptRecord.getMessageId())));
     pdu0.addOptionalParameter(
         new Tlv(SmppConstants.TAG_MSG_STATE, new byte[] {SmppConstants.STATE_DELIVERED}));
 
