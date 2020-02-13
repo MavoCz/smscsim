@@ -61,6 +61,8 @@ public class FailedDeliveryReceiptRecord extends DeliveryReceiptRecord {
             SmppPduUtils.convertOptionalStringToCOctet(getMessageId())));
     pdu0.addOptionalParameter(
         new Tlv(SmppConstants.TAG_MSG_STATE, new byte[] {SmppConstants.STATE_DELIVERED}));
+    pdu0.addOptionalParameter(new Tlv(MccMncUtils.TAG_MCC_MNC,
+        SmppPduUtils.convertOptionalStringToCOctet(MccMncUtils.SIMULATOR_MCC_MNC_VALUE)));
 
     pdu0.calculateAndSetCommandLength();
 
