@@ -56,8 +56,8 @@ public class SmppPduUtils {
                 deliveryReceiptRecord.getMessageId())));
     pdu0.addOptionalParameter(
         new Tlv(SmppConstants.TAG_MSG_STATE, new byte[] {SmppConstants.STATE_DELIVERED}));
-    pdu0.addOptionalParameter(new Tlv(MccMncUtils.TAG_MCC_MNC,
-        SmppPduUtils.convertOptionalStringToCOctet(MccMncUtils.SIMULATOR_MCC_MNC_VALUE)));
+
+    pdu0.addOptionalParameter(MccMncUtils.getSimulatorMccMncTlv());
 
     pdu0.calculateAndSetCommandLength();
 
