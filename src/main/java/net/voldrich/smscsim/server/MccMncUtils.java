@@ -6,7 +6,6 @@ import com.cloudhopper.smpp.tlv.Tlv;
 
 public class MccMncUtils {
 
-  // TODO: Get from config/env
   private final static String GATEWAY_SERVICE_MCC_MNC_TLV_TAG = "0x1400";
   private final static String COUNTRY_CODE = "123";
   private final static String NETWORK_CODE = "546";
