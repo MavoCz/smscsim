@@ -57,6 +57,8 @@ public class SmppPduUtils {
     pdu0.addOptionalParameter(
         new Tlv(SmppConstants.TAG_MSG_STATE, new byte[] {SmppConstants.STATE_DELIVERED}));
 
+    pdu0.addOptionalParameter(MccMncUtils.getSimulatorMccMncTlv());
+
     pdu0.calculateAndSetCommandLength();
 
     return pdu0;
