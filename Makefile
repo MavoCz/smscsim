@@ -1,7 +1,10 @@
 .RECIPEPREFIX +=
 
-.env:
-  cp .env.example .env
+smscsim:
+  cp .env.$@ .env
+
+message-bird:
+  cp .env.$@ .env
 
 .PHONY: test
 test:
