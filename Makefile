@@ -3,7 +3,7 @@
 simulator:
   cp .env.$@ .env
 
-message-bird:
+messagebird:
   cp .env.$@ .env
 
 .PHONY: test
@@ -20,8 +20,8 @@ build:
 run-simulator: simulator
   docker run --rm --detach --network=host --env-file .env --name $< smscsim
 
-.PHONY: run-message-bird
-run-message-bird: message-bird
+.PHONY: run-messagebird
+run-messagebird: messagebird
   docker run --rm --detach --network=host --env-file .env --name $< smscsim
 
 .PHONY: logs
@@ -32,20 +32,20 @@ logs:
 start:
   $(MAKE) build
   $(MAKE) run-simulator
-  $(MAKE) run-message-bird
+  $(MAKE) run-messagebird
 
 .PHONY: start-simulator
 start-simulator: build
  $(MAKE) run-simulator
 
-.PHONY: start-message-bird
-start-message-bird: build
- $(MAKE) run-message-bird
+.PHONY: start-messagebird
+start-messagebird: build
+ $(MAKE) run-messagebird
 
 .PHONY: stop
 stop:
   docker stop simulator
-  docker stop message-bird
+  docker stop messagebird
 
 .PHONY: restart
 restart:
