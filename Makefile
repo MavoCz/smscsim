@@ -31,11 +31,21 @@ logs:
 .PHONY: start
 start:
   $(MAKE) build
-  $(MAKE) run
+  $(MAKE) run-smscsim
+  $(MAKE) run-message-bird
+
+.PHONY: start-smscsim
+start-smscsim: build
+ $(MAKE) run-smscsim
+
+.PHONY: start-message-bird
+start-message-bird: build
+ $(MAKE) run-message-bird
 
 .PHONY: stop
 stop:
   docker stop smscsim
+  docker stop message-bird
 
 .PHONY: restart
 restart:
