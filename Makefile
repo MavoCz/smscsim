@@ -1,6 +1,6 @@
 .RECIPEPREFIX +=
 
-smscsim:
+simulator:
   cp .env.$@ .env
 
 message-bird:
@@ -16,8 +16,8 @@ build:
   docker build -f Dockerfile -t smscsim:latest .
   docker image prune -f
 
-.PHONY: run-smscsim
-run-smscsim: smscsim
+.PHONY: run-simulator
+run-simulator: simulator
   docker run --rm --detach --network=host --env-file .env --name $< smscsim
 
 .PHONY: run-message-bird
@@ -26,17 +26,17 @@ run-message-bird: message-bird
 
 .PHONY: logs
 logs:
-  docker logs -f smscsim
+  docker logs -f simulator
 
 .PHONY: start
 start:
   $(MAKE) build
-  $(MAKE) run-smscsim
+  $(MAKE) run-simulator
   $(MAKE) run-message-bird
 
-.PHONY: start-smscsim
-start-smscsim: build
- $(MAKE) run-smscsim
+.PHONY: start-simulator
+start-simulator: build
+ $(MAKE) run-simulator
 
 .PHONY: start-message-bird
 start-message-bird: build
@@ -44,7 +44,7 @@ start-message-bird: build
 
 .PHONY: stop
 stop:
-  docker stop smscsim
+  docker stop simulator
   docker stop message-bird
 
 .PHONY: restart
