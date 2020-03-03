@@ -3,20 +3,39 @@ package net.voldrich.smscsim.server;
 import static net.voldrich.smscsim.server.SmppPduUtils.convertOptionalStringToCOctet;
 
 import com.cloudhopper.smpp.tlv.Tlv;
+import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MccMncUtils {
 
-  private final static String GATEWAY_SERVICE_MCC_MNC_TLV_TAG = "0x1400";
-  private final static String COUNTRY_CODE = "123";
-  private final static String NETWORK_CODE = "546";
+  private static final Logger LOGGER = LoggerFactory.getLogger(MccMncUtils.class);
 
-  private final static short TAG_MCC_MNC = Short.decode(GATEWAY_SERVICE_MCC_MNC_TLV_TAG.trim());
-  private final static String SIMULATOR_MCC_MNC_VALUE = COUNTRY_CODE + NETWORK_CODE;
+  public static Tlv SIMULATOR_MCC_MNC_TLV;
 
-  public final static Tlv simulatorMccMncTlv = new Tlv(TAG_MCC_MNC, convertOptionalStringToCOctet(SIMULATOR_MCC_MNC_VALUE));
+  public MccMncUtils(Properties properties) {
+    String tlvTag = getNullSafeProperty(properties,"TLV_TAG");
+    String countryCode = getNullSafeProperty(properties,"MOBILE_COUNTRY_CODE");
+    String networkCode = getNullSafeProperty(properties,"MOBILE_NETWORK_CODE");
+
+    LOGGER.debug("Tlv tag: {}, country code: {}, network code: {}", tlvTag, countryCode, networkCode);
+
+    SIMULATOR_MCC_MNC_TLV = createSimulatorMccMncTlv(tlvTag, countryCode, networkCode);
+  }
+
+  private static Tlv createSimulatorMccMncTlv(String tlvTag, String countryCode, String networkCode) {
+    final short tlvTagToShort = Short.decode(tlvTag.trim());
+    final String simulatorMccMncValue = countryCode + networkCode;
+
+    return new Tlv(tlvTagToShort, convertOptionalStringToCOctet(simulatorMccMncValue));
+  }
 
   public static Tlv getSimulatorMccMncTlv() {
-    return simulatorMccMncTlv;
+    return SIMULATOR_MCC_MNC_TLV;
+  }
+
+  private String getNullSafeProperty(Properties properties, String key) {
+    return null == properties.getProperty(key) ? "" : properties.getProperty(key);
   }
 
 }
