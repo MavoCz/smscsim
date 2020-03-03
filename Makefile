@@ -16,9 +16,13 @@ build:
   docker build -f Dockerfile -t smscsim:latest .
   docker image prune -f
 
-.PHONY: run
-run: .env
-  docker run --rm --detach --network=host --env-file .env --name smscsim smscsim
+.PHONY: run-smscsim
+run-smscsim: smscsim
+  docker run --rm --detach --network=host --env-file .env --name $< smscsim
+
+.PHONY: run-message-bird
+run-message-bird: message-bird
+  docker run --rm --detach --network=host --env-file .env --name $< smscsim
 
 .PHONY: logs
 logs:
