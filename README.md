@@ -1,3 +1,35 @@
+Setup in CoreSMS Stack
+=======
+
+#### .env
+This repo has two `.env.*` files. `.env.simulator` & `.env.messagebird` which is needed in order to run two different instance. 
+No need to execute `make .env`. Starting either one or both will automatically generate its specific `.env` needed for its running instance.
+
+#### Run two simulators
+```
+make start
+```
+
+#### Run simulator
+```
+make start-simulator
+```
+
+#### Run mesagebird simulator
+```
+make start-messagebird
+```
+
+#### Stop simulators
+```
+make stop
+```
+
+#### Restart simulators
+```
+make restart
+```
+
 SMSC SMPP simulator
 =======
 
