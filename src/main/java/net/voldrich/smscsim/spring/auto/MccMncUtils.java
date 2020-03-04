@@ -1,13 +1,15 @@
-package net.voldrich.smscsim.server;
+package net.voldrich.smscsim.spring.auto;
 
 import static net.voldrich.smscsim.server.SmppPduUtils.convertOptionalStringToCOctet;
 
 import com.cloudhopper.smpp.tlv.Tlv;
-import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MccMncUtils {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MccMncUtils.class);
@@ -18,6 +20,7 @@ public class MccMncUtils {
 
   public static Tlv SIMULATOR_MCC_MNC_TLV;
 
+  @Autowired
   public MccMncUtils(Environment environment) {
     String tlvTag = getTlvTag(environment);
     String countryCode = getCountryCode(environment);
@@ -37,23 +40,23 @@ public class MccMncUtils {
     return new Tlv(tlvTagToShort, convertOptionalStringToCOctet(simulatorMccMncValue));
   }
 
-  public static Tlv getSimulatorMccMncTlv() {
-    return SIMULATOR_MCC_MNC_TLV;
-  }
-
-  private String getTlvTag(Environment environment) {
+  public String getTlvTag(Environment environment) {
     return null != environment.getProperty("TLV_TAG") ? environment.getProperty("TLV_TAG")
         : DEFAULT_TLV_TAG;
   }
 
-  private String getCountryCode(Environment environment) {
+  public String getCountryCode(Environment environment) {
     return null != environment.getProperty("COUNTRY_CODE") ? environment.getProperty("COUNTRY_CODE")
         : DEFAULT_COUNTRY_CODE;
   }
 
-  private String getNetworkCode(Environment environment) {
+  public String getNetworkCode(Environment environment) {
     return null != environment.getProperty("NETWORK_CODE") ? environment.getProperty("NETWORK_CODE")
         : DEFAULT_NETWORK_CODE;
+  }
+
+  public static Tlv getSimulatorMccMncTlv() {
+    return SIMULATOR_MCC_MNC_TLV;
   }
 
 }
