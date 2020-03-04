@@ -11,12 +11,16 @@ public class MccMncUtils {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MccMncUtils.class);
 
+  private final static String DEFAULT_TLV_TAG = "0x1400";
+  private final static String DEFAULT_COUNTRY_CODE = "123";
+  private final static String DEFAULT_NETWORK_CODE = "546";
+
   public static Tlv SIMULATOR_MCC_MNC_TLV;
 
   public MccMncUtils(Properties properties) {
-    String tlvTag = getNullSafeProperty(properties, "TLV_TAG", "0x1400");
-    String countryCode = getNullSafeProperty(properties, "COUNTRY_CODE", "123");
-    String networkCode = getNullSafeProperty(properties, "NETWORK_CODE", "456");
+    String tlvTag = getTlvTag(properties);
+    String countryCode = getCountryCode(properties);
+    String networkCode = getNetworkCode(properties);
 
     LOGGER
         .info("Tlv tag: {}, country code: {}, network code: {}", tlvTag, countryCode, networkCode);
@@ -36,8 +40,19 @@ public class MccMncUtils {
     return SIMULATOR_MCC_MNC_TLV;
   }
 
-  private String getNullSafeProperty(Properties properties, String key, String defaultVal) {
-    return null != properties.getProperty(key) ? properties.getProperty(key) : defaultVal;
+  private String getTlvTag(Properties properties) {
+    return null != properties.getProperty("TLV_TAG") ? properties.getProperty("TLV_TAG")
+        : DEFAULT_TLV_TAG;
+  }
+
+  private String getCountryCode(Properties properties) {
+    return null != properties.getProperty("COUNTRY_CODE") ? properties.getProperty("COUNTRY_CODE")
+        : DEFAULT_COUNTRY_CODE;
+  }
+
+  private String getNetworkCode(Properties properties) {
+    return null != properties.getProperty("NETWORK_CODE") ? properties.getProperty("NETWORK_CODE")
+        : DEFAULT_NETWORK_CODE;
   }
 
 }
