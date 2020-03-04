@@ -40,17 +40,17 @@ public class MccMncUtils {
     return new Tlv(tlvTagToShort, convertOptionalStringToCOctet(simulatorMccMncValue));
   }
 
-  public String getTlvTag(Environment environment) {
+  private String getTlvTag(Environment environment) {
     return null != environment.getProperty("TLV_TAG") ? environment.getProperty("TLV_TAG")
         : DEFAULT_TLV_TAG;
   }
 
-  public String getCountryCode(Environment environment) {
+  private String getCountryCode(Environment environment) {
     return null != environment.getProperty("COUNTRY_CODE") ? environment.getProperty("COUNTRY_CODE")
         : DEFAULT_COUNTRY_CODE;
   }
 
-  public String getNetworkCode(Environment environment) {
+  private String getNetworkCode(Environment environment) {
     return null != environment.getProperty("NETWORK_CODE") ? environment.getProperty("NETWORK_CODE")
         : DEFAULT_NETWORK_CODE;
   }
