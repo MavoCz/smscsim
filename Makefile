@@ -5,8 +5,7 @@
 
 .PHONY: test
 test:
-  docker-compose run --rm -v "$$HOME/.m2":/root/.m2  maven mvn clean test
-  docker-compose run --rm -v "$$HOME/.m2":/root/.m2  maven mvn clean #workaround fo removing write-protected `build/*` created by root user inside container
+  mvn test
 
 .PHONY: build
 build:
