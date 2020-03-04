@@ -18,7 +18,7 @@ public class MccMncUtils {
     String countryCode = getNullSafeProperty(properties,"MOBILE_COUNTRY_CODE");
     String networkCode = getNullSafeProperty(properties,"MOBILE_NETWORK_CODE");
 
-    LOGGER.debug("Tlv tag: {}, country code: {}, network code: {}", tlvTag, countryCode, networkCode);
+    LOGGER.info("Tlv tag: {}, country code: {}, network code: {}", tlvTag, countryCode, networkCode);
 
     SIMULATOR_MCC_MNC_TLV = createSimulatorMccMncTlv(tlvTag, countryCode, networkCode);
   }
