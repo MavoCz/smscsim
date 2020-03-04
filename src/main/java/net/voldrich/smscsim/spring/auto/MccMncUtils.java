@@ -6,6 +6,7 @@ import com.cloudhopper.smpp.tlv.Tlv;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
 public class MccMncUtils {
 
@@ -17,10 +18,10 @@ public class MccMncUtils {
 
   public static Tlv SIMULATOR_MCC_MNC_TLV;
 
-  public MccMncUtils(Properties properties) {
-    String tlvTag = getTlvTag(properties);
-    String countryCode = getCountryCode(properties);
-    String networkCode = getNetworkCode(properties);
+  public MccMncUtils(Environment environment) {
+    String tlvTag = getTlvTag(environment);
+    String countryCode = getCountryCode(environment);
+    String networkCode = getNetworkCode(environment);
 
     LOGGER
         .info("Tlv tag: {}, country code: {}, network code: {}", tlvTag, countryCode, networkCode);
@@ -40,18 +41,18 @@ public class MccMncUtils {
     return SIMULATOR_MCC_MNC_TLV;
   }
 
-  private String getTlvTag(Properties properties) {
-    return null != properties.getProperty("TLV_TAG") ? properties.getProperty("TLV_TAG")
+  private String getTlvTag(Environment environment) {
+    return null != environment.getProperty("TLV_TAG") ? environment.getProperty("TLV_TAG")
         : DEFAULT_TLV_TAG;
   }
 
-  private String getCountryCode(Properties properties) {
-    return null != properties.getProperty("COUNTRY_CODE") ? properties.getProperty("COUNTRY_CODE")
+  private String getCountryCode(Environment environment) {
+    return null != environment.getProperty("COUNTRY_CODE") ? environment.getProperty("COUNTRY_CODE")
         : DEFAULT_COUNTRY_CODE;
   }
 
-  private String getNetworkCode(Properties properties) {
-    return null != properties.getProperty("NETWORK_CODE") ? properties.getProperty("NETWORK_CODE")
+  private String getNetworkCode(Environment environment) {
+    return null != environment.getProperty("NETWORK_CODE") ? environment.getProperty("NETWORK_CODE")
         : DEFAULT_NETWORK_CODE;
   }
 

@@ -32,8 +32,4 @@
 		</property>
 	</bean>
 
-	<bean id="mccMncUtils" class="net.voldrich.smscsim.server.MccMncUtils">
-		<constructor-arg type="java.util.Properties" value="#{systemEnvironment}" />
-	</bean>
-
 </beans>
