@@ -8,6 +8,7 @@ import com.cloudhopper.smpp.pdu.PduRequest;
 import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.tlv.Tlv;
 import com.cloudhopper.smpp.util.DeliveryReceipt;
+import net.voldrich.smscsim.spring.auto.MccMncUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 

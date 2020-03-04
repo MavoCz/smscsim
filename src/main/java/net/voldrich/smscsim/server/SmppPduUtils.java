@@ -8,6 +8,7 @@ import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.SmppInvalidArgumentException;
 import com.cloudhopper.smpp.util.DeliveryReceipt;
 import java.nio.ByteBuffer;
+import net.voldrich.smscsim.spring.auto.MccMncUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
