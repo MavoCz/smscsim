@@ -1,5 +1,7 @@
 .RECIPEPREFIX +=
 
+DOCKER_IMAGE=smscsim
+
 simulator:
   cp .env.$@ .env
 
@@ -18,11 +20,11 @@ build:
 
 .PHONY: run-simulator
 run-simulator: simulator
-  docker run --rm --detach --network=host --env-file .env --name $< smscsim
+  docker run --rm --detach --network=host --env-file .env --name $< $(DOCKER_IMAGE)
 
 .PHONY: run-messagebird
 run-messagebird: messagebird
-  docker run --rm --detach --network=host --env-file .env --name $< smscsim
+  docker run --rm --detach --network=host --env-file .env --name $< $(DOCKER_IMAGE)
 
 .PHONY: logs
 logs:
