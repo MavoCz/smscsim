@@ -15,8 +15,8 @@ public class MccMncUtils {
 
   public MccMncUtils(Properties properties) {
     String tlvTag = getNullSafeProperty(properties, "TLV_TAG", "0x1400");
-    String countryCode = getNullSafeProperty(properties, "MOBILE_COUNTRY_CODE", "123");
-    String networkCode = getNullSafeProperty(properties, "MOBILE_NETWORK_CODE", "456");
+    String countryCode = getNullSafeProperty(properties, "COUNTRY_CODE", "123");
+    String networkCode = getNullSafeProperty(properties, "NETWORK_CODE", "456");
 
     LOGGER
         .info("Tlv tag: {}, country code: {}, network code: {}", tlvTag, countryCode, networkCode);
