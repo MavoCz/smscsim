@@ -21,13 +21,35 @@ make start-messagebird
 ```
 
 #### Stop simulators
+Stopping both
 ```
 make stop
+```
+
+Stopping simulator
+```
+make stop-simulator
+```
+
+Stopping messagebird simulator
+```
+make stop-messagebird
 ```
 
 #### Restart simulators
 ```
 make restart
+```
+
+#### Docker logs
+Simulator
+```
+make log-simulator
+```
+
+Messagebird
+```
+make log-messagebird
 ```
 
 SMSC SMPP simulator
