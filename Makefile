@@ -1,7 +1,12 @@
 .RECIPEPREFIX +=
 
-.env:
-  cp .env.example .env
+DOCKER_IMAGE=smscsim
+
+simulator:
+  cp .env.$@ .env
+
+messagebird:
+  cp .env.$@ .env
 
 .PHONY: test
 test:
@@ -13,22 +18,48 @@ build:
   docker build -f Dockerfile -t smscsim:latest .
   docker image prune -f
 
-.PHONY: run
-run: .env
-  docker run --rm --detach --network=host --env-file .env --name smscsim smscsim
+.PHONY: run-simulator
+run-simulator: simulator
+  docker run --rm --detach --network=host --env-file .env --name $< $(DOCKER_IMAGE)
 
-.PHONY: logs
-logs:
-  docker logs -f smscsim
+.PHONY: run-messagebird
+run-messagebird: messagebird
+  docker run --rm --detach --network=host --env-file .env --name $< $(DOCKER_IMAGE)
+
+.PHONY: log-simulator
+log-simulator:
+  docker logs -f simulator
+
+.PHONY: log-messagebird
+log-messagebird:
+  docker logs -f messagebird
 
 .PHONY: start
 start:
   $(MAKE) build
-  $(MAKE) run
+  $(MAKE) run-simulator
+  $(MAKE) run-messagebird
+
+.PHONY: start-simulator
+start-simulator: build
+ $(MAKE) run-simulator
+
+.PHONY: start-messagebird
+start-messagebird: build
+ $(MAKE) run-messagebird
 
 .PHONY: stop
 stop:
-  docker stop smscsim
+  $(MAKE) stop-simulator
+  $(MAKE) stop-messagebird
+
+.PHONY: stop-simulator
+stop-simulator:
+  docker stop simulator
+
+.PHONY: stop-messagebird
+stop-messagebird:
+  docker stop messagebird
 
 .PHONY: restart
 restart:
