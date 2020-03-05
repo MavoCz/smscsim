@@ -26,9 +26,13 @@ run-simulator: simulator
 run-messagebird: messagebird
   docker run --rm --detach --network=host --env-file .env --name $< $(DOCKER_IMAGE)
 
-.PHONY: logs
-logs:
+.PHONY: log-simulator
+log-simulator:
   docker logs -f simulator
+
+.PHONY: log-messagebird
+log-messagebird:
+  docker logs -f messagebird
 
 .PHONY: start
 start:
@@ -46,7 +50,15 @@ start-messagebird: build
 
 .PHONY: stop
 stop:
+  $(MAKE) stop-simulator
+  $(MAKE) stop-messagebird
+
+.PHONY: stop-simulator
+stop-simulator:
   docker stop simulator
+
+.PHONY: stop-messagebird
+stop-messagebird:
   docker stop messagebird
 
 .PHONY: restart
