@@ -2,10 +2,10 @@
 
 DOCKER_IMAGE=smscsim
 
-simulator:
+smsc-sim-bind1:
   cp .env.$@ .env
 
-messagebird:
+smsc-sim-bind2:
   cp .env.$@ .env
 
 .PHONY: test
@@ -18,48 +18,48 @@ build:
   docker build -f Dockerfile -t smscsim:latest .
   docker image prune -f
 
-.PHONY: run-simulator
-run-simulator: simulator
+.PHONY: run-smsc-sim-bind1
+run-smsc-sim-bind1: smsc-sim-bind1
   docker run --rm --detach --network=host --env-file .env --name $< $(DOCKER_IMAGE)
 
-.PHONY: run-messagebird
-run-messagebird: messagebird
+.PHONY: run-smscsim-sim-bind2
+run-smsc-sim-bind2: smsc-sim-bind2
   docker run --rm --detach --network=host --env-file .env --name $< $(DOCKER_IMAGE)
 
-.PHONY: log-simulator
-log-simulator:
-  docker logs -f simulator
+.PHONY: log-smsc-sim-bind1
+log-smsc-sim-bind1:
+  docker logs -f smsc-sim-bind1
 
-.PHONY: log-messagebird
-log-messagebird:
-  docker logs -f messagebird
+.PHONY: log-smsc-sim-bind2
+log-smsc-sim-bind2:
+  docker logs -f smsc-sim-bind2
 
 .PHONY: start
 start:
   $(MAKE) build
-  $(MAKE) run-simulator
-  $(MAKE) run-messagebird
+  $(MAKE) run-smsc-sim-bind1
+  $(MAKE) run-smsc-sim-bind2
 
-.PHONY: start-simulator
-start-simulator: build
- $(MAKE) run-simulator
+.PHONY: start-smsc-sim-bind1
+start-smsc-sim-bind1: build
+ $(MAKE) run-smsc-sim-bind1
 
-.PHONY: start-messagebird
-start-messagebird: build
- $(MAKE) run-messagebird
+.PHONY: start-smsc-sim-bind2
+start-smsc-sim-bind2: build
+ $(MAKE) run-smsc-sim-bind2
 
 .PHONY: stop
 stop:
-  $(MAKE) stop-simulator
-  $(MAKE) stop-messagebird
+  $(MAKE) stop-smsc-sim-bind1
+  $(MAKE) stop-smsc-sim-bind2
 
-.PHONY: stop-simulator
-stop-simulator:
-  docker stop simulator
+.PHONY: stop-smsc-sim-bind1
+stop-smsc-sim-bind1:
+  docker stop smsc-sim-bind1
 
-.PHONY: stop-messagebird
-stop-messagebird:
-  docker stop messagebird
+.PHONY: stop-smsc-sim-bind2
+stop-smsc-sim-bind2:
+  docker stop smsc-sim-bind2
 
 .PHONY: restart
 restart:
