@@ -2,7 +2,7 @@ Setup in CoreSMS Stack
 =======
 
 #### .env
-This repo has two `.env.*` files. `.env.simulator` & `.env.messagebird` which is needed in order to run two different instance. 
+This repo has two `.env.*` files. `.env.smsc-sim-bind1` & `.env.smsc-sim-bind2` which is needed in order to run two different instance. 
 No need to execute `make .env`. Starting either one or both will automatically generate its specific `.env` needed for its running instance.
 
 #### Run two simulators
@@ -12,12 +12,12 @@ make start
 
 #### Run simulator
 ```
-make start-simulator
+make start-smsc-sim-bind1
 ```
 
 #### Run mesagebird simulator
 ```
-make start-messagebird
+make start-smsc-sim-bind2
 ```
 
 #### Stop simulators
@@ -28,12 +28,12 @@ make stop
 
 Stopping simulator
 ```
-make stop-simulator
+make stop-smsc-sim-bind1
 ```
 
 Stopping messagebird simulator
 ```
-make stop-messagebird
+make stop-smsc-sim-bind2
 ```
 
 #### Restart simulators
@@ -44,12 +44,12 @@ make restart
 #### Docker logs
 Simulator
 ```
-make log-simulator
+make log-smsc-sim-bind1
 ```
 
 Messagebird
 ```
-make log-messagebird
+make log-smsc-sim-bind2
 ```
 
 SMSC SMPP simulator
