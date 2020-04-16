@@ -44,6 +44,7 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
       SubmitSmResp submitSmResp = submitSm.createResponse();
       String messageId = UUID.randomUUID().toString();
       submitSmResp.setMessageId(messageId);
+
       try {
         // We can not wait in this thread!!
         // It would block handling of other messages and performance would drop drastically!!
@@ -52,13 +53,9 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
           String sourceAddress = submitSm.getSourceAddress().getAddress();
           DeliveryReceiptRecord record;
           if (sourceAddress.matches("TEST\\d\\d")) {
-            double successRate = Double.parseDouble(sourceAddress.replaceAll("TEST", ""));
-            double rng = Math.random() * 100;
-            if (rng <= successRate) {
-              record = new DeliveryReceiptRecord(session, submitSm, messageId);
-            } else {
-              record = new FailedDeliveryReceiptRecord(session, submitSm, messageId);
-            }
+            record = chanceDelivery(session, submitSm, sourceAddress, messageId);
+          } else if (sourceAddress.matches("ERROR\\d\\d\\d")) {
+            record = fakeErrorDelivery(session, submitSm, sourceAddress, messageId);
           } else {
             record = new DeliveryReceiptRecord(session, submitSm, messageId);
           }
@@ -80,6 +77,24 @@ public class SmscSmppSessionHandler extends DefaultSmppSessionHandler {
     }
 
     return pduRequest.createResponse();
+  }
+
+
+  private DeliveryReceiptRecord fakeErrorDelivery(SmppSession session, SubmitSm submitSm,
+      String sourceAddress, String messageId) {
+    String errorCode = sourceAddress.replaceAll("ERROR", "");
+    return new FailedDeliveryReceiptRecord(session, submitSm, messageId, errorCode);
+  }
+
+  private DeliveryReceiptRecord chanceDelivery(SmppSession session, SubmitSm submitSm,
+      String sourceAddress, String messageId) {
+    double successRate = Double.parseDouble(sourceAddress.replaceAll("TEST", ""));
+    double rng = Math.random() * 100;
+    if (rng <= successRate) {
+      return new DeliveryReceiptRecord(session, submitSm, messageId);
+    } else {
+      return new FailedDeliveryReceiptRecord(session, submitSm, messageId);
+    }
   }
 
   @Override

@@ -14,6 +14,8 @@ public class DeliveryReceiptRecord extends DelayedRecord {
   private final String messageId;
   private final DateTime submitDate;
 
+  private String errorCode = "";
+
   public DeliveryReceiptRecord(SmppSession session, SubmitSm pduRequest, String messageId) {
     super(session);
     this.sourceAddress = pduRequest.getSourceAddress();
@@ -32,6 +34,14 @@ public class DeliveryReceiptRecord extends DelayedRecord {
 
   public String getMessageId() {
     return messageId;
+  }
+
+  public void setErrorCode(String errorCode) {
+    this.errorCode = errorCode;
+  }
+
+  public String getErrorCode() {
+    return this.errorCode;
   }
 
   public DateTime getSubmitDate() {

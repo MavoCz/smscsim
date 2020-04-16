@@ -18,6 +18,13 @@ public class FailedDeliveryReceiptRecord extends DeliveryReceiptRecord {
     super(session, pduRequest, messageId);
   }
 
+  public FailedDeliveryReceiptRecord(SmppSession session, SubmitSm pduRequest, String messageId,
+      String errorCode) {
+    super(session, pduRequest, messageId);
+    setErrorCode(errorCode);
+  }
+
+
   // rip-off from the above method while I don't have a good understanding of SMPP & SMS
   @Override
   public PduRequest getRequest(int sequenceNumber) throws Exception {
@@ -44,7 +51,7 @@ public class FailedDeliveryReceiptRecord extends DeliveryReceiptRecord {
             getSubmitDate(),
             new DateTime().withZone(DateTimeZone.UTC),
             SmppConstants.STATE_REJECTED,
-            "500",
+            simulateError(),
             "-");
     String shortMessage = deliveryReceipt.toShortMessage();
     pdu0.setShortMessage(CharsetUtil.encode(shortMessage, CharsetUtil.CHARSET_GSM));
@@ -61,12 +68,16 @@ public class FailedDeliveryReceiptRecord extends DeliveryReceiptRecord {
             SmppConstants.TAG_RECEIPTED_MSG_ID,
             SmppPduUtils.convertOptionalStringToCOctet(getMessageId())));
     pdu0.addOptionalParameter(
-        new Tlv(SmppConstants.TAG_MSG_STATE, new byte[] {SmppConstants.STATE_DELIVERED}));
+        new Tlv(SmppConstants.TAG_MSG_STATE, new byte[]{SmppConstants.STATE_DELIVERED}));
 
     pdu0.addOptionalParameter(MccMncUtils.getSimulatorMccMncTlv());
 
     pdu0.calculateAndSetCommandLength();
 
     return pdu0;
+  }
+
+  private String simulateError() {
+    return getErrorCode().isEmpty() ? "500" : getErrorCode();
   }
 }
